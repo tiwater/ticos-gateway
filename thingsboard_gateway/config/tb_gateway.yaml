@@ -1,5 +1,5 @@
 thingsboard:
-  host: thingsboard.cloud
+  host: hub.ticos.cn
   port: 1883
   remoteShell: false
   remoteConfiguration: false
@@ -20,7 +20,9 @@ thingsboard:
     inactivityTimeoutSeconds: 120
     inactivityCheckPeriodSeconds: 10
   security:
-    accessToken: PUT_YOUR_GW_ACCESS_TOKEN_HERE
+    clientId: hzl@test
+    username: testuser
+    password: testpassword
   qos: 1
 storage:
   type: memory
@@ -45,20 +47,16 @@ grpc:
   minTimeBetweenPingsMs: 10000
   minPingIntervalWithoutDataMs: 5000
 connectors:
-  -
-    name: MQTT Broker Connector
-    type: mqtt
-    configuration: mqtt.json
-
 #  -
-#    name: Modbus Connector
-#    type: modbus
-#    configuration: modbus.json
+#    name: MQTT Broker Connector
+#    type: mqtt
+#    configuration: mqtt.json
 #
-#  -
-#    name: Modbus Connector
-#    type: modbus
-#    configuration: modbus_serial.json
+#
+  -
+    name: Modbus Connector
+    type: modbus
+    configuration: modbus_ticos.json
 #
 #  -
 #    name: OPC-UA Connector

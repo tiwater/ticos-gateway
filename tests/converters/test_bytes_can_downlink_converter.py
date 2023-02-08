@@ -1,4 +1,4 @@
-#     Copyright 2020. ThingsBoard
+#     Copyright 2020. Ticos
 #
 #     Licensed under the Apache License, Version 2.0 (the "License"];
 #     you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ import unittest
 from random import randint, uniform, choice
 from string import ascii_lowercase
 
-from thingsboard_gateway.connectors.can.bytes_can_downlink_converter import BytesCanDownlinkConverter
+from ticos_gateway.connectors.can.bytes_can_downlink_converter import BytesCanDownlinkConverter
 
 
 class BytesCanDownlinkConverterTests(unittest.TestCase):

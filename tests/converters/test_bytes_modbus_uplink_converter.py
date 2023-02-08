@@ -3,7 +3,7 @@ import unittest
 from pymodbus.constants import Endian
 from pymodbus.payload import BinaryPayloadBuilder
 
-from thingsboard_gateway.connectors.modbus.bytes_modbus_uplink_converter import BytesModbusUplinkConverter
+from ticos_gateway.connectors.modbus.bytes_modbus_uplink_converter import BytesModbusUplinkConverter
 
 
 class ModbusConverterTests(unittest.TestCase):

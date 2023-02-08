@@ -1,4 +1,4 @@
-#     Copyright 2020. ThingsBoard
+#     Copyright 2020. Ticos
 #
 #     Licensed under the Apache License, Version 2.0 (the "License");
 #     you may not use this file except in compliance with the License.
@@ -21,10 +21,10 @@ from unittest.mock import Mock, call
 
 import pyodbc
 from simplejson import load
-from thingsboard_gateway.tb_utility.tb_utility import TBUtility
+from ticos_gateway.ticos_utility.ticos_utility import TBUtility
 
-import thingsboard_gateway
-from thingsboard_gateway.connectors.odbc.odbc_connector import OdbcConnector
+import ticos_gateway
+from ticos_gateway.connectors.odbc.odbc_connector import OdbcConnector
 
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s - %(levelname)s - %(module)s - %(lineno)d - %(message)s',
@@ -59,7 +59,7 @@ class OdbcConnectorTests(unittest.TestCase):
     POSTGRES_PORT = 12345
 
     def setUp(self):
-        self.gateway = Mock(spec=thingsboard_gateway.TBGatewayService)
+        self.gateway = Mock(spec=ticos_gateway.TBGatewayService)
         self.gateway.get_config_path.return_value = self.CONFIG_PATH
 
         self.connector = None

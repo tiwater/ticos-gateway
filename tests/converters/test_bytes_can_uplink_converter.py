@@ -1,4 +1,4 @@
-#     Copyright 2020. ThingsBoard
+#     Copyright 2020. Ticos
 #
 #     Licensed under the Apache License, Version 2.0 (the "License"];
 #     you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ from math import isclose
 from random import randint, uniform, choice
 from string import ascii_lowercase
 
-from thingsboard_gateway.connectors.can.bytes_can_uplink_converter import BytesCanUplinkConverter
+from ticos_gateway.connectors.can.bytes_can_uplink_converter import BytesCanUplinkConverter
 
 
 class BytesCanUplinkConverterTests(unittest.TestCase):
@@ -36,8 +36,8 @@ class BytesCanUplinkConverterTests(unittest.TestCase):
             "is_ts": True,
             "type": "wrong_type"
         }]
-        tb_data = self.converter.convert(configs, can_data)
-        self.assertTrue(self._has_no_data(tb_data))
+        ticos_data = self.converter.convert(configs, can_data)
+        self.assertTrue(self._has_no_data(ticos_data))
 
     def test_bool_true(self):
         can_data = [0, 1, 0, 0, 0]
@@ -47,8 +47,8 @@ class BytesCanUplinkConverterTests(unittest.TestCase):
             "type": "bool",
             "start": 1
         }]
-        tb_data = self.converter.convert(configs, can_data)
-        self.assertTrue(tb_data["telemetry"]["boolVar"])
+        ticos_data = self.converter.convert(configs, can_data)
+        self.assertTrue(ticos_data["telemetry"]["boolVar"])
 
     def test_bool_false(self):
         can_data = [1, 0, 1, 1, 1]
@@ -58,8 +58,8 @@ class BytesCanUplinkConverterTests(unittest.TestCase):
             "type": "bool",
             "start": 1
         }]
-        tb_data = self.converter.convert(configs, can_data)
-        self.assertFalse(tb_data["attributes"]["boolVar"])
+        ticos_data = self.converter.convert(configs, can_data)
+        self.assertFalse(ticos_data["attributes"]["boolVar"])
 
     def _test_int(self, type, byteorder):
         int_value = randint(-32768, 32767)
@@ -77,8 +77,8 @@ class BytesCanUplinkConverterTests(unittest.TestCase):
         }]
 
         can_data.extend(int_value.to_bytes(int_size, byteorder, signed=(int_value < 0)))
-        tb_data = self.converter.convert(configs, can_data)
-        self.assertEqual(tb_data["telemetry"][type + "Var"], int_value)
+        ticos_data = self.converter.convert(configs, can_data)
+        self.assertEqual(ticos_data["telemetry"][type + "Var"], int_value)
 
     def test_int_big_byteorder(self):
         self._test_int("int", "big")
@@ -107,8 +107,8 @@ class BytesCanUplinkConverterTests(unittest.TestCase):
 
         can_data.extend(_struct.pack((">" if byteorder[0] == "b" else "<") + type[0],
                                      float_value))
-        tb_data = self.converter.convert(configs, can_data)
-        self.assertTrue(isclose(tb_data["telemetry"][type + "Var"], float_value, rel_tol=1e-05))
+        ticos_data = self.converter.convert(configs, can_data)
+        self.assertTrue(isclose(ticos_data["telemetry"][type + "Var"], float_value, rel_tol=1e-05))
 
     def test_float_big_byteorder(self):
         self._test_float_point_number("float", "big")
@@ -136,8 +136,8 @@ class BytesCanUplinkConverterTests(unittest.TestCase):
         }]
 
         can_data = str_value.encode(encoding)
-        tb_data = self.converter.convert(configs, can_data)
-        self.assertEqual(tb_data["telemetry"]["stringVar"], str_value)
+        ticos_data = self.converter.convert(configs, can_data)
+        self.assertEqual(ticos_data["telemetry"]["stringVar"], str_value)
 
     def test_string_default_ascii_encoding(self):
         self._test_string()
@@ -165,18 +165,18 @@ class BytesCanUplinkConverterTests(unittest.TestCase):
 
     def test_strict_eval_violation(self):
         number = randint(-128, 256)
-        tb_data = self._test_eval_int(number, True, "pow(value, 2)")
-        self.assertTrue(self._has_no_data(tb_data))
+        ticos_data = self._test_eval_int(number, True, "pow(value, 2)")
+        self.assertTrue(self._has_no_data(ticos_data))
 
     def test_strict_eval(self):
         number = randint(-128, 256)
-        tb_data = self._test_eval_int(number, True, "value * value")
-        self.assertEqual(tb_data["telemetry"]["var"], number * number)
+        ticos_data = self._test_eval_int(number, True, "value * value")
+        self.assertEqual(ticos_data["telemetry"]["var"], number * number)
 
     def test_no_strict_eval(self):
         number = randint(-128, 256)
-        tb_data = self._test_eval_int(number, False, "pow(value, 2)")
-        self.assertEqual(tb_data["telemetry"]["var"], number * number)
+        ticos_data = self._test_eval_int(number, False, "pow(value, 2)")
+        self.assertEqual(ticos_data["telemetry"]["var"], number * number)
 
     def test_multiple_valid_configs(self):
         bool_value = True
@@ -200,9 +200,9 @@ class BytesCanUplinkConverterTests(unittest.TestCase):
             }
         ]
 
-        tb_data = self.converter.convert(configs, can_data)
-        self.assertEqual(tb_data["telemetry"]["boolVar"], bool_value)
-        self.assertEqual(tb_data["attributes"]["intVar"], int_value)
+        ticos_data = self.converter.convert(configs, can_data)
+        self.assertEqual(ticos_data["telemetry"]["boolVar"], bool_value)
+        self.assertEqual(ticos_data["attributes"]["intVar"], int_value)
 
     def test_multiple_configs_one_invalid(self):
         bool_value = True
@@ -225,9 +225,9 @@ class BytesCanUplinkConverterTests(unittest.TestCase):
             }
         ]
 
-        tb_data = self.converter.convert(configs, can_data)
-        self.assertEqual(tb_data["telemetry"]["validVar"], bool_value)
-        self.assertIsNone(tb_data["attributes"].get("invalidVar"))
+        ticos_data = self.converter.convert(configs, can_data)
+        self.assertEqual(ticos_data["telemetry"]["validVar"], bool_value)
+        self.assertIsNone(ticos_data["attributes"].get("invalidVar"))
 
 
 if __name__ == '__main__':

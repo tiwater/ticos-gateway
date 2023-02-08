@@ -1,5 +1,5 @@
 
-#      Copyright 2022. ThingsBoard
+#      Copyright 2022. Ticos
 #  #
 #      Licensed under the Apache License, Version 2.0 (the "License");
 #      you may not use this file except in compliance with the License.
@@ -18,11 +18,11 @@ import unittest
 from unittest.mock import Mock
 from os import path
 from time import sleep
-import thingsboard_gateway
+import ticos_gateway
 from simplejson import load
 
-from thingsboard_gateway.gateway.tb_gateway_service import DEFAULT_CONNECTORS
-from thingsboard_gateway.tb_utility.tb_utility import TBUtility
+from ticos_gateway.gateway.ticos_gateway_service import DEFAULT_CONNECTORS
+from ticos_gateway.ticos_utility.ticos_utility import TBUtility
 
 logging.basicConfig(level=logging.ERROR,
                     format='%(asctime)s - %(levelname)s - %(module)s - %(lineno)d - %(message)s',
@@ -35,7 +35,7 @@ class ConnectorTestBase(unittest.TestCase):
                             "data" + path.sep)
 
     def setUp(self):
-        self.gateway = Mock(spec=thingsboard_gateway.TBGatewayService)
+        self.gateway = Mock(spec=ticos_gateway.TBGatewayService)
         self.connector = None
         self.config = None
 

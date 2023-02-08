@@ -1,2 +1,2 @@
-graft thingsboard_gateway/config
+graft ticos_gateway/config
 include LICENSE

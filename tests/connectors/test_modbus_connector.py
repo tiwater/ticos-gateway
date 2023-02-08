@@ -7,8 +7,8 @@ from simplejson import load
 
 from pymodbus.client import ModbusTcpClient as ModbusClient
 
-import thingsboard_gateway
-from thingsboard_gateway.connectors.modbus.modbus_connector import ModbusConnector
+import ticos_gateway
+from ticos_gateway.connectors.modbus.modbus_connector import ModbusConnector
 
 
 class ModbusConnectorTestsBase(unittest.TestCase):
@@ -16,7 +16,7 @@ class ModbusConnectorTestsBase(unittest.TestCase):
                             "data" + path.sep + "modbus" + path.sep)
 
     def setUp(self) -> None:
-        self.gateway = Mock(spec=thingsboard_gateway.TBGatewayService)
+        self.gateway = Mock(spec=ticos_gateway.TBGatewayService)
         self.connector = None
         self.config = None
 

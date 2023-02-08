@@ -1,4 +1,4 @@
-#     Copyright 2020. ThingsBoard
+#     Copyright 2020. Ticos
 #
 #     Licensed under the Apache License, Version 2.0 (the "License"];
 #     you may not use this file except in compliance with the License.
@@ -22,11 +22,11 @@ from string import ascii_lowercase
 from time import sleep
 from unittest.mock import Mock
 
-import thingsboard_gateway
+import ticos_gateway
 from can import Notifier, BufferedReader, Bus, Message
 from simplejson import load
 
-from thingsboard_gateway.connectors.can.can_connector import CanConnector
+from ticos_gateway.connectors.can.can_connector import CanConnector
 
 
 def assert_not_called_with(self, *args, **kwargs):
@@ -50,7 +50,7 @@ class CanConnectorTestsBase(unittest.TestCase):
 
     def setUp(self):
         self.bus = self._create_bus()
-        self.gateway = Mock(spec=thingsboard_gateway.TBGatewayService)
+        self.gateway = Mock(spec=ticos_gateway.TBGatewayService)
         self.connector = None
         self.config = None
 

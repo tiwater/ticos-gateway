@@ -19,11 +19,11 @@ from ssl import CERT_REQUIRED, PROTOCOL_TLSv1_2
 from ticos_gateway.ticos_utility.ticos_utility import TBUtility
 
 try:
-    from ticos_gateway_mqtt import TBGatewayMqttClient
+    from tb_gateway_mqtt import TBGatewayMqttClient
 except ImportError:
     print("ticos-mqtt-client library not found - installing...")
     TBUtility.install_package('ticos-mqtt-client')
-    from ticos_gateway_mqtt import TBGatewayMqttClient
+    from tb_gateway_mqtt import TBGatewayMqttClient
 
 log = logging.getLogger("ticos_connection")
 

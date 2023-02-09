@@ -1,0 +1,4 @@
+[submodule "ticos_mqtt_client"]
+	path = ticos_mqtt_client
+	url = https://github.com/tiwater/ticos-gw-python-client-sdk.git
+	branch = masa-tb-to-ticos

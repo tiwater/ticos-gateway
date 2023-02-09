@@ -9,7 +9,7 @@ message Response {
   FromConnectorMessage connectorMessage = 3;
 }
 
-service TBGatewayProtoService {
+service TicosGatewayProtoService {
     rpc stream(FromConnectorMessage) returns (FromServiceMessage);
 }
 

@@ -25,7 +25,7 @@ from simplejson import JSONDecodeError, dumps, loads
 log = getLogger("service")
 
 
-class TBUtility:
+class TicosUtility:
 
     @staticmethod
     def decode(message):
@@ -127,7 +127,7 @@ class TBUtility:
     def get_values(expression, body=None, value_type="string", get_tag=False, expression_instead_none=False):
         expression_arr = findall(r'\$\{[${A-Za-z0-9.^\]\[*_:]*\}', expression)
 
-        values = [TBUtility.get_value(exp, body, value_type=value_type, get_tag=get_tag,
+        values = [TicosUtility.get_value(exp, body, value_type=value_type, get_tag=get_tag,
                                       expression_instead_none=expression_instead_none) for exp in expression_arr]
 
         if '${' not in expression:
@@ -166,8 +166,8 @@ class TBUtility:
         if '${' in text:
             for item in text.split('/'):
                 if '${' in item:
-                    tag = '${' + TBUtility.get_value(item, data['data'], 'params', get_tag=True) + '}'
-                    value = TBUtility.get_value(item, data['data'], 'params', expression_instead_none=True)
+                    tag = '${' + TicosUtility.get_value(item, data['data'], 'params', get_tag=True) + '}'
+                    value = TicosUtility.get_value(item, data['data'], 'params', expression_instead_none=True)
                     text = text.replace(tag, str(value))
         return text
 
@@ -206,6 +206,6 @@ class TBUtility:
 
         if cert_detail.not_valid_after - datetime.datetime.now() <= datetime.timedelta(days=days_left):
             if generate_new:
-                return TBUtility.generate_certificate(certificate, key, cert_detail)
+                return TicosUtility.generate_certificate(certificate, key, cert_detail)
             else:
                 return True

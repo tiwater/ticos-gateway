@@ -27,15 +27,15 @@ from ticos_gateway.gateway.constants import SEND_ON_CHANGE_PARAMETER, DEFAULT_SE
 from ticos_gateway.gateway.constant_enums import Status
 from ticos_gateway.connectors.connector import Connector, log
 from ticos_gateway.connectors.mqtt.mqtt_decorators import CustomCollectStatistics
-from ticos_gateway.ticos_utility.ticos_loader import TBModuleLoader
-from ticos_gateway.ticos_utility.ticos_utility import TBUtility
+from ticos_gateway.ticos_utility.ticos_loader import TicosModuleLoader
+from ticos_gateway.ticos_utility.ticos_utility import TicosUtility
 from ticos_gateway.gateway.statistics_service import StatisticsService
 
 try:
     from paho.mqtt.client import Client
 except ImportError:
     print("paho-mqtt library not found")
-    TBUtility.install_package("paho-mqtt", version=">=1.6")
+    TicosUtility.install_package("paho-mqtt", version=">=1.6")
     from paho.mqtt.client import Client
 
 from paho.mqtt.client import MQTTv31, MQTTv311, MQTTv5
@@ -101,7 +101,7 @@ class MqttConnector(Connector, Thread):
     def __init__(self, gateway, config, connector_type):
         super().__init__()
 
-        self.__gateway = gateway  # Reference to TB Gateway
+        self.__gateway = gateway  # Reference to Ticos Gateway
         self._connector_type = connector_type  # Should be "mqtt"
         self.config = config  # mqtt.json contents
 
@@ -356,7 +356,7 @@ class MqttConnector(Connector, Thread):
                         continue
 
                     # Find and load required class
-                    module = TBModuleLoader.import_module(self._connector_type, converter_class_name)
+                    module = TicosModuleLoader.import_module(self._connector_type, converter_class_name)
                     if module:
                         self.__log.debug('Converter %s for topic %s - found!', converter_class_name,
                                          mapping["topicFilter"])
@@ -372,7 +372,7 @@ class MqttConnector(Connector, Thread):
                     if not regex_topic.startswith('$aws') and regex_topic.startswith('$'):
                         regex_topic = '/'.join(regex_topic.split('/')[2:])
                     else:
-                        regex_topic = TBUtility.topic_to_regex(regex_topic)
+                        regex_topic = TicosUtility.topic_to_regex(regex_topic)
 
                     # There may be more than one converter per topic, so I'm using vectors
                     if not self.__mapping_sub_topics.get(regex_topic):
@@ -385,7 +385,7 @@ class MqttConnector(Connector, Thread):
 
                     self.__log.info('Connector "%s" subscribe to %s',
                                     self.get_name(),
-                                    TBUtility.regex_to_topic(regex_topic))
+                                    TicosUtility.regex_to_topic(regex_topic))
 
                 except Exception as e:
                     self.__log.exception(e)
@@ -394,21 +394,21 @@ class MqttConnector(Connector, Thread):
             for request in [entry for entry in self.__connect_requests if entry is not None]:
                 # requests are guaranteed to have topicFilter field. See __init__
                 self.__subscribe(request["topicFilter"], request.get("subscriptionQos", 1))
-                topic_filter = TBUtility.topic_to_regex(request.get("topicFilter"))
+                topic_filter = TicosUtility.topic_to_regex(request.get("topicFilter"))
                 self.__connect_requests_sub_topics[topic_filter] = request
 
             # Setup disconnection requests handling --------------------------------------------------------------------
             for request in [entry for entry in self.__disconnect_requests if entry is not None]:
                 # requests are guaranteed to have topicFilter field. See __init__
                 self.__subscribe(request["topicFilter"], request.get("subscriptionQos", 1))
-                topic_filter = TBUtility.topic_to_regex(request.get("topicFilter"))
+                topic_filter = TicosUtility.topic_to_regex(request.get("topicFilter"))
                 self.__disconnect_requests_sub_topics[topic_filter] = request
 
             # Setup attributes requests handling -----------------------------------------------------------------------
             for request in [entry for entry in self.__attribute_requests if entry is not None]:
                 # requests are guaranteed to have topicFilter field. See __init__
                 self.__subscribe(request["topicFilter"], request.get("subscriptionQos", 1))
-                topic_filter = TBUtility.topic_to_regex(request.get("topicFilter"))
+                topic_filter = TicosUtility.topic_to_regex(request.get("topicFilter"))
                 self.__attribute_requests_sub_topics[topic_filter] = request
         else:
             result_codes = RESULT_CODES_V5 if self._mqtt_version == 5 else RESULT_CODES_V3
@@ -483,7 +483,7 @@ class MqttConnector(Connector, Thread):
                 client, userdata, message = self._on_message_queue.get()
 
                 self.statistics['MessagesReceived'] += 1
-                content = TBUtility.decode(message)
+                content = TicosUtility.decode(message)
 
                 # Check if message topic exists in mappings "i.e., I'm posting telemetry/attributes" -------------------
                 topic_handlers = [regex for regex in self.__mapping_sub_topics if fullmatch(regex, message.topic)]
@@ -539,7 +539,7 @@ class MqttConnector(Connector, Thread):
                             if device_name_match is not None:
                                 found_device_name = device_name_match.group(0)
                         elif handler.get("deviceNameJsonExpression"):
-                            found_device_name = TBUtility.get_value(handler["deviceNameJsonExpression"], content)
+                            found_device_name = TicosUtility.get_value(handler["deviceNameJsonExpression"], content)
 
                         # Get device type (if any), either from topic or from content
                         if handler.get("deviceTypeTopicExpression"):
@@ -548,7 +548,7 @@ class MqttConnector(Connector, Thread):
                             handler[
                                 "deviceTypeTopicExpression"]
                         elif handler.get("deviceTypeJsonExpression"):
-                            found_device_type = TBUtility.get_value(handler["deviceTypeJsonExpression"], content)
+                            found_device_type = TicosUtility.get_value(handler["deviceTypeJsonExpression"], content)
 
                         if found_device_name is None:
                             self.__log.error("Device name missing from connection request")
@@ -579,7 +579,7 @@ class MqttConnector(Connector, Thread):
                             if device_name_match is not None:
                                 found_device_name = device_name_match.group(0)
                         elif handler.get("deviceNameJsonExpression"):
-                            found_device_name = TBUtility.get_value(handler["deviceNameJsonExpression"], content)
+                            found_device_name = TicosUtility.get_value(handler["deviceNameJsonExpression"], content)
 
                         # Get device type (if any), either from topic or from content
                         if handler.get("deviceTypeTopicExpression"):
@@ -587,7 +587,7 @@ class MqttConnector(Connector, Thread):
                             if device_type_match is not None:
                                 found_device_type = device_type_match.group(0)
                         elif handler.get("deviceTypeJsonExpression"):
-                            found_device_type = TBUtility.get_value(handler["deviceTypeJsonExpression"], content)
+                            found_device_type = TicosUtility.get_value(handler["deviceTypeJsonExpression"], content)
 
                         if found_device_name is None:
                             self.__log.error("Device name missing from disconnection request")
@@ -622,7 +622,7 @@ class MqttConnector(Connector, Thread):
                                 if device_name_match is not None:
                                     found_device_name = device_name_match.group(0)
                             elif handler.get("deviceNameJsonExpression"):
-                                found_device_name = TBUtility.get_value(handler["deviceNameJsonExpression"], content)
+                                found_device_name = TicosUtility.get_value(handler["deviceNameJsonExpression"], content)
 
                             # Get attribute name, either from topic or from content
                             if handler.get("attributeNameTopicExpression"):
@@ -631,7 +631,7 @@ class MqttConnector(Connector, Thread):
                                     found_attribute_names = attribute_name_match.group(0)
                             elif handler.get("attributeNameJsonExpression"):
                                 found_attribute_names = list(filter(lambda x: x is not None,
-                                                                    TBUtility.get_values(
+                                                                    TicosUtility.get_values(
                                                                         handler["attributeNameJsonExpression"],
                                                                         content)))
 
@@ -697,7 +697,7 @@ class MqttConnector(Connector, Thread):
 
         self._client.publish(topic, data, retain=retain).wait_for_publish()
 
-    @StatisticsService.CollectAllReceivedBytesStatistics(start_stat_type='allReceivedBytesFromTB')
+    @StatisticsService.CollectAllReceivedBytesStatistics(start_stat_type='allReceivedBytesFromTicos')
     def on_attributes_update(self, content):
         if self.__attribute_updates:
             for attribute_update in self.__attribute_updates:
@@ -744,7 +744,7 @@ class MqttConnector(Connector, Thread):
                 .replace("${methodName}", str(content['data']['method'])) \
                 .replace("${requestId}", str(content["data"]["id"]))
 
-            expected_response_topic = TBUtility.replace_params_tags(expected_response_topic, content)
+            expected_response_topic = TicosUtility.replace_params_tags(expected_response_topic, content)
 
             timeout = time() * 1000 + rpc_config.get("responseTimeout")
 
@@ -780,12 +780,12 @@ class MqttConnector(Connector, Thread):
             .replace("${methodName}", str(content['data']['method'])) \
             .replace("${requestId}", str(content["data"]["id"]))
 
-        request_topic = TBUtility.replace_params_tags(request_topic, content)
+        request_topic = TicosUtility.replace_params_tags(request_topic, content)
 
-        data_to_send_tags = TBUtility.get_values(rpc_config.get('valueExpression'), content['data'],
+        data_to_send_tags = TicosUtility.get_values(rpc_config.get('valueExpression'), content['data'],
                                                  'params',
                                                  get_tag=True)
-        data_to_send_values = TBUtility.get_values(rpc_config.get('valueExpression'), content['data'],
+        data_to_send_values = TicosUtility.get_values(rpc_config.get('valueExpression'), content['data'],
                                                    'params',
                                                    expression_instead_none=True)
 
@@ -807,7 +807,7 @@ class MqttConnector(Connector, Thread):
         except Exception as e:
             self.__log.exception(e)
 
-    @StatisticsService.CollectAllReceivedBytesStatistics(start_stat_type='allReceivedBytesFromTB')
+    @StatisticsService.CollectAllReceivedBytesStatistics(start_stat_type='allReceivedBytesFromTicos')
     def server_side_rpc_handler(self, content):
         self.__log.info("Incoming server-side RPC: %s", content)
 

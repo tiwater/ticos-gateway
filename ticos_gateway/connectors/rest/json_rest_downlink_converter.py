@@ -15,7 +15,7 @@
 from urllib.parse import quote
 
 from ticos_gateway.connectors.rest.rest_converter import RESTConverter, log
-from ticos_gateway.ticos_utility.ticos_utility import TBUtility
+from ticos_gateway.ticos_utility.ticos_utility import TicosUtility
 from ticos_gateway.gateway.statistics_service import StatisticsService
 
 
@@ -23,7 +23,7 @@ class JsonRESTDownlinkConverter(RESTConverter):
     def __init__(self, config):
         self.__config = config
 
-    @StatisticsService.CollectStatistics(start_stat_type='allReceivedBytesFromTB',
+    @StatisticsService.CollectStatistics(start_stat_type='allReceivedBytesFromTicos',
                                          end_stat_type='allBytesSentToDevices')
     def convert(self, config, data):
         try:
@@ -53,11 +53,11 @@ class JsonRESTDownlinkConverter(RESTConverter):
                         .replace("${deviceName}", quote(data["device"]))
                 }
 
-                result['url'] = TBUtility.replace_params_tags(result['url'], data)
+                result['url'] = TicosUtility.replace_params_tags(result['url'], data)
 
-                data_tags = TBUtility.get_values(config.get('valueExpression'), data['data'], 'params',
+                data_tags = TicosUtility.get_values(config.get('valueExpression'), data['data'], 'params',
                                                  get_tag=True)
-                data_values = TBUtility.get_values(config.get('valueExpression'), data['data'], 'params',
+                data_values = TicosUtility.get_values(config.get('valueExpression'), data['data'], 'params',
                                                    expression_instead_none=True)
 
                 for (tag, value) in zip(data_tags, data_values):

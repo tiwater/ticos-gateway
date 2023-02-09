@@ -26,7 +26,7 @@ GRPC_CONNECTORS_FOLDER = '/grpc_connectors'.replace('/', path.sep)
 DEB_INSTALLATION_EXTENSION_PATH = '/var/lib/ticos_gateway/extensions'.replace('/', path.sep)
 
 
-class TBModuleLoader:
+class TicosModuleLoader:
     PATHS = []
     LOADED_CONNECTORS = {}
 
@@ -36,20 +36,20 @@ class TBModuleLoader:
         log.debug("Root path is: " + root_path)
         if path.exists(DEB_INSTALLATION_EXTENSION_PATH):
             log.debug("Debian installation extensions folder exists.")
-            TBModuleLoader.PATHS.append(DEB_INSTALLATION_EXTENSION_PATH)
-        TBModuleLoader.PATHS.append(root_path + EXTENSIONS_FOLDER)
-        TBModuleLoader.PATHS.append(root_path + CONNECTORS_FOLDER)
-        TBModuleLoader.PATHS.append(root_path + GRPC_CONNECTORS_FOLDER)
+            TicosModuleLoader.PATHS.append(DEB_INSTALLATION_EXTENSION_PATH)
+        TicosModuleLoader.PATHS.append(root_path + EXTENSIONS_FOLDER)
+        TicosModuleLoader.PATHS.append(root_path + CONNECTORS_FOLDER)
+        TicosModuleLoader.PATHS.append(root_path + GRPC_CONNECTORS_FOLDER)
 
     @staticmethod
     def import_module(extension_type, module_name):
-        if len(TBModuleLoader.PATHS) == 0:
-            TBModuleLoader.find_paths()
+        if len(TicosUoduleLoader.PATHS) == 0:
+            TicosModuleLoader.find_paths()
         buffered_module_name = extension_type + module_name
-        if TBModuleLoader.LOADED_CONNECTORS.get(buffered_module_name) is not None:
-            return TBModuleLoader.LOADED_CONNECTORS[buffered_module_name]
+        if TicosModuleLoader.LOADED_CONNECTORS.get(buffered_module_name) is not None:
+            return TicosModuleLoader.LOADED_CONNECTORS[buffered_module_name]
         try:
-            for current_path in TBModuleLoader.PATHS:
+            for current_path in TicosModuleLoader.PATHS:
                 current_extension_path = current_path + path.sep + extension_type
                 if path.exists(current_extension_path):
                     for file in listdir(current_extension_path):
@@ -66,7 +66,7 @@ class TBModuleLoader:
                                 for extension_class in getmembers(module, isclass):
                                     if module_name in extension_class:
                                         log.info("Import %s from %s.", module_name, current_extension_path)
-                                        TBModuleLoader.LOADED_CONNECTORS[buffered_module_name] = extension_class[1]
+                                        TicosModuleLoader.LOADED_CONNECTORS[buffered_module_name] = extension_class[1]
                                         return extension_class[1]
                             except ImportError as e:
                                 log.exception(e)

@@ -19,20 +19,20 @@ from threading import Thread
 from time import sleep, time
 
 from ticos_gateway.gateway.statistics_service import StatisticsService
-from ticos_gateway.ticos_utility.ticos_loader import TBModuleLoader
-from ticos_gateway.ticos_utility.ticos_utility import TBUtility
+from ticos_gateway.ticos_utility.ticos_loader import TicosModuleLoader
+from ticos_gateway.ticos_utility.ticos_utility import TicosUtility
 
 try:
     from bacpypes.core import run, stop
 except ImportError:
     print("BACnet library not found - installing...")
-    TBUtility.install_package("bacpypes", ">=0.18.0")
+    TicosUtility.install_package("bacpypes", ">=0.18.0")
     from bacpypes.core import run, stop
 
 from bacpypes.pdu import Address, GlobalBroadcast, LocalBroadcast, LocalStation, RemoteStation
 
 from ticos_gateway.connectors.connector import Connector, log
-from ticos_gateway.connectors.bacnet.bacnet_utilities.ticos_gateway_bacnet_application import TBBACnetApplication
+from ticos_gateway.connectors.bacnet.bacnet_utilities.ticos_gateway_bacnet_application import TicosBACnetApplication
 
 
 class BACnetConnector(Thread, Connector):
@@ -47,15 +47,15 @@ class BACnetConnector(Thread, Connector):
         self.__device_indexes = {}
         self.__devices_address_name = {}
         self.__gateway = gateway
-        self._application = TBBACnetApplication(self, self.__config)
+        self._application = TicosBACnetApplication(self, self.__config)
         self.__bacnet_core_thread = Thread(target=run, name="BACnet core thread", daemon=True,
                                            kwargs={"sigterm": None, "sigusr1": None})
         self.__bacnet_core_thread.start()
         self.__stopped = False
         self.__config_devices = self.__config["devices"]
         self.default_converters = {
-            "uplink_converter": TBModuleLoader.import_module(self._connector_type, "BACnetUplinkConverter"),
-            "downlink_converter": TBModuleLoader.import_module(self._connector_type, "BACnetDownlinkConverter")}
+            "uplink_converter": TicosModuleLoader.import_module(self._connector_type, "BACnetUplinkConverter"),
+            "downlink_converter": TicosModuleLoader.import_module(self._connector_type, "BACnetDownlinkConverter")}
         self.__request_functions = {"writeProperty": self._application.do_write_property,
                                     "readProperty": self._application.do_read_property,
                                     "risingEdge": self._application.do_binary_rising_edge}
@@ -115,7 +115,7 @@ class BACnetConnector(Thread, Connector):
     def is_connected(self):
         return self.__connected
 
-    @StatisticsService.CollectAllReceivedBytesStatistics(start_stat_type='allReceivedBytesFromTB')
+    @StatisticsService.CollectAllReceivedBytesStatistics(start_stat_type='allReceivedBytesFromTicos')
     def on_attributes_update(self, content):
         try:
             log.debug('Recieved Attribute Update Request: %r', str(content))
@@ -137,7 +137,7 @@ class BACnetConnector(Thread, Connector):
         except Exception as e:
             log.exception(e)
 
-    @StatisticsService.CollectAllReceivedBytesStatistics(start_stat_type='allReceivedBytesFromTB')
+    @StatisticsService.CollectAllReceivedBytesStatistics(start_stat_type='allReceivedBytesFromTicos')
     def server_side_rpc_handler(self, content):
         try:
             log.debug('Recieved RPC Request: %r', str(content))
@@ -248,7 +248,7 @@ class BACnetConnector(Thread, Connector):
                 try:
                     for converter_type in self.default_converters:
                         converter_object = self.default_converters[converter_type] if datatype_config.get(
-                            "class") is None else TBModuleLoader.import_module(self._connector_type,
+                            "class") is None else TicosModuleLoader.import_module(self._connector_type,
                                                                                device.get("class"))
                         datatype_config[converter_type] = converter_object(device)
                 except Exception as e:
@@ -260,7 +260,7 @@ class BACnetConnector(Thread, Connector):
                 if device["address"] == data["address"]:
                     try:
                         config_address = Address(device["address"])
-                        device_name_tag = TBUtility.get_value(device["deviceName"], get_tag=True)
+                        device_name_tag = TicosUtility.get_value(device["deviceName"], get_tag=True)
                         device_name = device["deviceName"].replace("${" + device_name_tag + "}", data.pop("name"))
                         device_information = {
                             **data,

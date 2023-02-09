@@ -1,5 +1,5 @@
 import datetime
-from ticos_gateway.ticos_utility.ticos_utility import TBUtility
+from ticos_gateway.ticos_utility.ticos_utility import TicosUtility
 
 try:
     from cryptography.hazmat.backends import default_backend
@@ -10,7 +10,7 @@ try:
     from cryptography.hazmat.primitives import hashes
 except ImportError:
     print("Requests library not found - installing...")
-    TBUtility.install_package("cryptography")
+    TicosUtility.install_package("cryptography")
     from cryptography.hazmat.backends import default_backend
     from cryptography.hazmat.primitives import serialization
     from cryptography.hazmat.primitives.asymmetric import rsa

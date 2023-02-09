@@ -50,7 +50,7 @@ class CanConnectorTestsBase(unittest.TestCase):
 
     def setUp(self):
         self.bus = self._create_bus()
-        self.gateway = Mock(spec=ticos_gateway.TBGatewayService)
+        self.gateway = Mock(spec=ticos_gateway.TicosGatewayService)
         self.connector = None
         self.config = None
 

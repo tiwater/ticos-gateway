@@ -16,7 +16,7 @@ class ModbusConnectorTestsBase(unittest.TestCase):
                             "data" + path.sep + "modbus" + path.sep)
 
     def setUp(self) -> None:
-        self.gateway = Mock(spec=ticos_gateway.TBGatewayService)
+        self.gateway = Mock(spec=ticos_gateway.TicosGatewayService)
         self.connector = None
         self.config = None
 

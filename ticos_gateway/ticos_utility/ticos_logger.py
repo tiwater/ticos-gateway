@@ -19,7 +19,7 @@ from time import time
 from os import environ
 
 
-class TBLoggerHandler(logging.Handler):
+class TicosLoggerHandler(logging.Handler):
     def __init__(self, gateway):
         self.current_log_level = 'INFO'
         super().__init__(logging.getLevelName(self.current_log_level))

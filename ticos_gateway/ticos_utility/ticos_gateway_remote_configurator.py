@@ -24,9 +24,9 @@ from time import sleep, time
 from simplejson import dump, dumps, loads
 from yaml import safe_dump
 
-from ticos_gateway.gateway.ticos_client import TBClient
-from ticos_gateway.ticos_utility.ticos_loader import TBModuleLoader
-from ticos_gateway.ticos_utility.ticos_logger import TBLoggerHandler
+from ticos_gateway.gateway.ticos_client import TicosClient
+from ticos_gateway.ticos_utility.ticos_loader import TicosModuleLoader
+from ticos_gateway.ticos_utility.ticos_logger import TicosLoggerHandler
 
 # pylint: disable=protected-access
 LOG = getLogger("service")
@@ -151,7 +151,7 @@ class RemoteConfigurator:
                             "config": {connector['configuration']: input_connector["config"]},
                             "config_updated": stat(config_file_path),
                             "config_file_path": config_file_path})
-                        connector_class = TBModuleLoader.import_module(connector["type"],
+                        connector_class = TicosModuleLoader.import_module(connector["type"],
                                                                        self.__gateway._default_connectors.get(connector["type"], connector.get("class")))
                         self.__gateway._implemented_connectors[connector["type"]] = connector_class
         except Exception as e:
@@ -210,7 +210,7 @@ class RemoteConfigurator:
             self.__old_ticos_client.unsubscribe('*')
             self.__old_ticos_client.stop()
             self.__old_ticos_client.disconnect()
-            self.__gateway.ticos_client = TBClient(self.__new_general_configuration_file["ticos"], self.__old_ticos_client.get_config_folder_path())
+            self.__gateway.ticos_client = TicosClient(self.__new_general_configuration_file["ticos"], self.__old_ticos_client.get_config_folder_path())
             self.__gateway.ticos_client.connect()
             connection_state = False
             while time() * 1000 - apply_start < self.__apply_timeout * 1000 and not connection_state:
@@ -246,7 +246,7 @@ class RemoteConfigurator:
             self.__new_general_configuration_file = self.__old_general_configuration_file
             self.__gateway.ticos_client.disconnect()
             self.__gateway.ticos_client.stop()
-            self.__gateway.ticos_client = TBClient(self.__old_general_configuration_file["ticos"])
+            self.__gateway.ticos_client = TicosClient(self.__old_general_configuration_file["ticos"])
             self.__gateway.ticos_client.connect()
             self.__gateway.subscribe_to_required_topics()
             LOG.debug("%s connection has been restored", str(self.__gateway.ticos_client.client._client))
@@ -286,7 +286,7 @@ class RemoteConfigurator:
             fileConfig(logs_config)
             LOG = getLogger('service')
             # self.__gateway.remote_handler.deactivate()
-            self.__gateway.remote_handler = TBLoggerHandler(self.__gateway)
+            self.__gateway.remote_handler = TicosLoggerHandler(self.__gateway)
             self.__gateway.main_handler.setLevel(new_logging_level)
             self.__gateway.main_handler.setTarget(self.__gateway.remote_handler)
             if new_logging_level == "NOTSET":

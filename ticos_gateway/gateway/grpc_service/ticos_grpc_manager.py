@@ -23,21 +23,21 @@ from simplejson import dumps
 from ticos_gateway.gateway.constant_enums import DownlinkMessageType, Status
 from ticos_gateway.gateway.grpc_service.grpc_downlink_converter import GrpcDownlinkConverter
 from ticos_gateway.gateway.grpc_service.grpc_uplink_converter import GrpcUplinkConverter
-from ticos_gateway.gateway.grpc_service.ticos_grpc_server import TBGRPCServer
+from ticos_gateway.gateway.grpc_service.ticos_grpc_server import TicosGRPCServer
 from ticos_gateway.gateway.proto.messages_pb2 import *
-from ticos_gateway.gateway.proto.messages_pb2_grpc import add_TBGatewayProtoServiceServicer_to_server
+from ticos_gateway.gateway.proto.messages_pb2_grpc import add_TicosGatewayProtoServiceServicer_to_server
 
 log = logging.getLogger('grpc')
 
 DEFAULT_STATISTICS_DICT = {"MessagesReceived": 0, "MessagesSent": 0}
 
 
-class TBGRPCServerManager(Thread):
+class TicosGRPCServerManager(Thread):
     def __init__(self, gateway, config):
         super().__init__()
         self.daemon = True
         self.__gateway = gateway
-        self.setName("TB GRPC manager thread")
+        self.setName("Ticos GRPC manager thread")
         self.__aio_server: grpc.aio.Server = None
         self.__register_connector = None
         self.__unregister_connector = None
@@ -46,7 +46,7 @@ class TBGRPCServerManager(Thread):
         self.__config = config
         self.__grpc_port = config['serverPort']
         self.__connectors_sessions = {}
-        self.__grpc_server = TBGRPCServer(self.incoming_messages_cb)
+        self.__grpc_server = TicosGRPCServer(self.incoming_messages_cb)
         self.__uplink_converter = GrpcUplinkConverter()
         self.__downlink_converter = GrpcDownlinkConverter()
         self.sessions = {}
@@ -236,7 +236,7 @@ class TBGRPCServerManager(Thread):
                 ('grpc.http2.min_time_between_pings_ms', config.get('minTimeBetweenPingsMs', 10000)),
                 ('grpc.http2.min_ping_interval_without_data_ms', config.get('minPingIntervalWithoutDataMs', 5000)),
             ))
-        add_TBGatewayProtoServiceServicer_to_server(self.__grpc_server, self.__aio_server)
+        add_TicosGatewayProtoServiceServicer_to_server(self.__grpc_server, self.__aio_server)
         self.__aio_server.add_insecure_port("[::]:%s" % (self.__grpc_port,))
         await self.__aio_server.start()
         await self.__aio_server.wait_for_termination()

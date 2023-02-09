@@ -27,13 +27,13 @@ from ticos_gateway.connectors.ftp.file import File
 from ticos_gateway.connectors.ftp.ftp_uplink_converter import FTPUplinkConverter
 from ticos_gateway.connectors.ftp.path import Path
 from ticos_gateway.gateway.statistics_service import StatisticsService
-from ticos_gateway.ticos_utility.ticos_utility import TBUtility
+from ticos_gateway.ticos_utility.ticos_utility import TicosUtility
 
 try:
     from requests import Timeout, request
 except ImportError:
     print("Requests library not found - installing...")
-    TBUtility.install_package("requests")
+    TicosUtility.install_package("requests")
     from requests import Timeout, request
 
 from ticos_gateway.connectors.connector import Connector, log
@@ -209,7 +209,7 @@ class FTPConnector(Connector, Thread):
             return False
         return True
 
-    @StatisticsService.CollectAllReceivedBytesStatistics(start_stat_type='allReceivedBytesFromTB')
+    @StatisticsService.CollectAllReceivedBytesStatistics(start_stat_type='allReceivedBytesFromTicos')
     def on_attributes_update(self, content):
         try:
             for attribute_request in self.__attribute_updates:
@@ -262,7 +262,7 @@ class FTPConnector(Connector, Thread):
         for rpc_request in self.__config.get("serverSideRpc", []):
             self.__rpc_requests.append(rpc_request)
 
-    @StatisticsService.CollectAllReceivedBytesStatistics(start_stat_type='allReceivedBytesFromTB')
+    @StatisticsService.CollectAllReceivedBytesStatistics(start_stat_type='allReceivedBytesFromTicos')
     def server_side_rpc_handler(self, content):
         try:
             for rpc_request in self.__rpc_requests:

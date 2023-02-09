@@ -16,19 +16,19 @@ import logging
 import threading
 from time import sleep, time
 from ssl import CERT_REQUIRED, PROTOCOL_TLSv1_2
-from ticos_gateway.ticos_utility.ticos_utility import TBUtility
+from ticos_gateway.ticos_utility.ticos_utility import TicosUtility
 
 try:
-    from tb_gateway_mqtt import TBGatewayMqttClient
+    from ticos_gateway_mqtt import TicosGatewayMqttClient
 except ImportError:
     print("ticos-mqtt-client library not found - installing...")
-    TBUtility.install_package('ticos-mqtt-client')
-    from tb_gateway_mqtt import TBGatewayMqttClient
+    TicosUtility.install_package('ticos-mqtt-client')
+    from ticos_gateway_mqtt import TicosGatewayMqttClient
 
 log = logging.getLogger("ticos_connection")
 
 
-class TBClient(threading.Thread):
+class TicosClient(threading.Thread):
     def __init__(self, config, config_folder_path):
         super().__init__()
         self.setName('Connection thread.')
@@ -59,7 +59,7 @@ class TBClient(threading.Thread):
             self.__password = str(credentials["password"])
         if credentials.get("clientId") is not None:
             self.__client_id = str(credentials["clientId"])
-        self.client = TBGatewayMqttClient(self.__host, self.__port, self.__username, self.__password, self, quality_of_service=self.__default_quality_of_service, client_id=self.__client_id)
+        self.client = TicosGatewayMqttClient(self.__host, self.__port, self.__username, self.__password, self, quality_of_service=self.__default_quality_of_service, client_id=self.__client_id)
         if self.__tls:
             self.__ca_cert = self.__config_folder_path + credentials.get("caCert") if credentials.get("caCert") is not None else None
             self.__private_key = self.__config_folder_path + credentials.get("privateKey") if credentials.get("privateKey") is not None else None
@@ -98,14 +98,14 @@ class TBClient(threading.Thread):
             if time() - self._last_cert_check_time >= self.__check_cert_period:
                 if self.__cert:
                     log.info('Will generate new certificate')
-                    new_cert = TBUtility.check_certificate(self.__cert, key=self.__private_key,
+                    new_cert = TicosUtility.check_certificate(self.__cert, key=self.__private_key,
                                                            days_left=self.__certificate_days_left)
 
                     if new_cert:
                         self.client.send_attributes({'newCertificate': new_cert})
 
                 if self.__ca_cert:
-                    is_outdated = TBUtility.check_certificate(self.__ca_cert, generate_new=False,
+                    is_outdated = TicosUtility.check_certificate(self.__ca_cert, generate_new=False,
                                                               days_left=self.__certificate_days_left)
 
                     if is_outdated:
@@ -125,7 +125,7 @@ class TBClient(threading.Thread):
         return self.__is_connected
 
     def _on_connect(self, client, userdata, flags, result_code, *extra_params):
-        log.debug('TB client %s connected to Ticos', str(client))
+        log.debug('Ticos client %s connected to Ticos', str(client))
         if result_code == 0:
             self.__is_connected = True
         # pylint: disable=protected-access
@@ -134,7 +134,7 @@ class TBClient(threading.Thread):
     def _on_disconnect(self, client, userdata, result_code):
         # pylint: disable=protected-access
         if self.client._client != client:
-            log.info("TB client %s has been disconnected. Current client for connection is: %s", str(client), str(self.client._client))
+            log.info("Ticos client %s has been disconnected. Current client for connection is: %s", str(client), str(self.client._client))
             client.disconnect()
             client.loop_stop()
         else:

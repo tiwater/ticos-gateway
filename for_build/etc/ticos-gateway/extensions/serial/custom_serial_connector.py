@@ -18,17 +18,17 @@ import time
 from random import choice
 from string import ascii_lowercase
 from threading import Thread
-from ticos_gateway.ticos_utility.ticos_utility import TBUtility
+from ticos_gateway.ticos_utility.ticos_utility import TicosUtility
 
 try:
     import serial
 except ImportError:
     print("pyserial library not found - installing...")
-    TBUtility.install_package("pyserial")
+    TicosUtility.install_package("pyserial")
     import serial
 
 from ticos_gateway.connectors.connector import Connector, log  # Import base class for connector and logger
-from ticos_gateway.ticos_utility.ticos_loader import TBModuleLoader
+from ticos_gateway.ticos_utility.ticos_loader import TicosModuleLoader
 
 
 class CustomSerialConnector(Thread, Connector):  # Define a connector class, it should inherit from "Connector" class.
@@ -102,7 +102,7 @@ class CustomSerialConnector(Thread, Connector):  # Define a connector class, it 
             if devices_config is not None:
                 for device_config in devices_config:
                     if device_config.get('converter') is not None:
-                        converter = TBModuleLoader.import_module(connector_type, device_config['converter'])
+                        converter = TicosModuleLoader.import_module(connector_type, device_config['converter'])
                         self.__devices[device_config['name']] = {'converter': converter(device_config),
                                                                  'device_config': device_config}
                     else:

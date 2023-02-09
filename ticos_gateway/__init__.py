@@ -12,4 +12,4 @@
 #     See the License for the specific language governing permissions and
 #     limitations under the License.
 
-from ticos_gateway.gateway.ticos_gateway_service import TBGatewayService
+from ticos_gateway.gateway.ticos_gateway_service import TicosGatewayService

@@ -18,7 +18,7 @@ from queue import Queue
 from random import choice
 from string import ascii_lowercase
 
-from ticos_gateway.ticos_utility.ticos_utility import TBUtility
+from ticos_gateway.ticos_utility.ticos_utility import TicosUtility
 
 # Try import Pymodbus library or install it and import
 installation_required = False
@@ -32,14 +32,14 @@ except ImportError:
 
 if installation_required:
     print("Modbus library not found - installing...")
-    TBUtility.install_package("pymodbus", ">=3.0.0")
-    TBUtility.install_package('pyserial')
-    TBUtility.install_package('pyserial-asyncio')
+    TicosUtility.install_package("pymodbus", ">=3.0.0")
+    TicosUtility.install_package('pyserial')
+    TicosUtility.install_package('pyserial-asyncio')
 
 try:
     from twisted.internet import reactor
 except ImportError:
-    TBUtility.install_package('twisted')
+    TicosUtility.install_package('twisted')
     from twisted.internet import reactor
 
 from twisted.internet import reactor

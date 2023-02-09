@@ -34,11 +34,11 @@ class GrpcClient(Thread):
         self.__port = port
         self.on_connect = connect_callback
         self.setDaemon(True)
-        self.setName("TBGrpcClient thread")
+        self.setName("TicosGrpcClient thread")
         self.stopped = False
         self.connected = False
         self.channel = grpc.insecure_channel("%s:%i" % (self.__host, self.__port))
-        self.stub = messages_pb2_grpc.TBGatewayProtoServiceStub(self.channel)
+        self.stub = messages_pb2_grpc.TicosGatewayProtoServiceStub(self.channel)
         self.output_queue = queue.SimpleQueue()
         self.__service_queue = queue.SimpleQueue()
         self.__request_data_queue = queue.SimpleQueue()
@@ -114,7 +114,7 @@ class GrpcClient(Thread):
                     else:
                         self.channel.close()
                         self.channel = grpc.insecure_channel("%s:%i" % (self.__host, self.__port))
-                        self.stub = messages_pb2_grpc.TBGatewayProtoServiceStub(self.channel)
+                        self.stub = messages_pb2_grpc.TicosGatewayProtoServiceStub(self.channel)
                         self.on_connect()
 
     def __process_responses(self):

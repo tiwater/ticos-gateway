@@ -21,15 +21,15 @@ from threading import Thread
 from time import sleep
 
 from ticos_gateway.connectors.connector import Connector, log
-from ticos_gateway.ticos_utility.ticos_loader import TBModuleLoader
-from ticos_gateway.ticos_utility.ticos_utility import TBUtility
+from ticos_gateway.ticos_utility.ticos_loader import TicosModuleLoader
+from ticos_gateway.ticos_utility.ticos_utility import TicosUtility
 from ticos_gateway.gateway.statistics_service import StatisticsService
 
 try:
     from slixmpp import ClientXMPP
 except ImportError:
     print("Slixmpp library not found - installing...")
-    TBUtility.install_package("bleak")
+    TicosUtility.install_package("bleak")
     from slixmpp import ClientXMPP
 
 from slixmpp.exceptions import IqError, IqTimeout
@@ -87,7 +87,7 @@ class XMPPConnector(Connector, Thread):
                 continue
 
     def _load_converter(self, converter_name):
-        module = TBModuleLoader.import_module(self._connector_type, converter_name)
+        module = TicosModuleLoader.import_module(self._connector_type, converter_name)
 
         if module:
             log.debug('Converter %s for device %s - found!', converter_name, self.name)
@@ -207,7 +207,7 @@ class XMPPConnector(Connector, Thread):
         self._xmpp.send_message(mto=jid, mfrom=self._server_config['jid'], mbody=data,
                                 mtype='chat')
 
-    @StatisticsService.CollectAllReceivedBytesStatistics(start_stat_type='allReceivedBytesFromTB')
+    @StatisticsService.CollectAllReceivedBytesStatistics(start_stat_type='allReceivedBytesFromTicos')
     def on_attributes_update(self, content):
         self.__log.debug('Got attribute update: %s', content)
 
@@ -227,7 +227,7 @@ class XMPPConnector(Connector, Thread):
         except KeyError as e:
             self.__log.error('Key not found %s during processing attribute update', e)
 
-    @StatisticsService.CollectAllReceivedBytesStatistics(start_stat_type='allReceivedBytesFromTB')
+    @StatisticsService.CollectAllReceivedBytesStatistics(start_stat_type='allReceivedBytesFromTicos')
     def server_side_rpc_handler(self, content):
         self.__log.debug('Got RPC: %s', content)
 
@@ -239,10 +239,10 @@ class XMPPConnector(Connector, Thread):
             rpcs = self._devices[device_jid].get('serverSideRpc', [])
             for rpc_conf in rpcs:
                 if rpc_conf['methodRPC'] == content['data']['method']:
-                    data_to_send_tags = TBUtility.get_values(rpc_conf.get('valueExpression'), content['data'],
+                    data_to_send_tags = TicosUtility.get_values(rpc_conf.get('valueExpression'), content['data'],
                                                              'params',
                                                              get_tag=True)
-                    data_to_send_values = TBUtility.get_values(rpc_conf.get('valueExpression'), content['data'],
+                    data_to_send_values = TicosUtility.get_values(rpc_conf.get('valueExpression'), content['data'],
                                                                'params',
                                                                expression_instead_none=True)
 

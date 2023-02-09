@@ -22,14 +22,14 @@ from time import sleep, time
 
 import simplejson
 
-from ticos_gateway.ticos_utility.ticos_loader import TBModuleLoader
-from ticos_gateway.ticos_utility.ticos_utility import TBUtility
+from ticos_gateway.ticos_utility.ticos_loader import TicosModuleLoader
+from ticos_gateway.ticos_utility.ticos_utility import TicosUtility
 
 try:
     from requests import Timeout, request
 except ImportError:
     print("Requests library not found - installing...")
-    TBUtility.install_package("requests")
+    TicosUtility.install_package("requests")
     from requests import Timeout, request
 import requests
 from requests.auth import HTTPBasicAuth
@@ -130,9 +130,9 @@ class RequestConnector(Connector, Thread):
 
                         if rpc_request.get('responseValueExpression'):
                             response_value_expression = rpc_request['responseValueExpression']
-                            values = TBUtility.get_values(response_value_expression, response.json(),
+                            values = TicosUtility.get_values(response_value_expression, response.json(),
                                                           expression_instead_none=True)
-                            values_tags = TBUtility.get_values(response_value_expression, response.json(), get_tag=True)
+                            values_tags = TicosUtility.get_values(response_value_expression, response.json(), get_tag=True)
                             full_value = response_value_expression
                             for (value, value_tag) in zip(values, values_tags):
                                 is_valid_value = "${" in response_value_expression and "}" in \
@@ -165,7 +165,7 @@ class RequestConnector(Connector, Thread):
                 log.debug(endpoint)
                 converter = None
                 if endpoint["converter"]["type"] == "custom":
-                    module = TBModuleLoader.import_module(self._connector_type, endpoint["converter"]["extension"])
+                    module = TicosModuleLoader.import_module(self._connector_type, endpoint["converter"]["extension"])
                     if module is not None:
                         log.debug('Custom converter for url %s - found!', endpoint["url"])
                         converter = module(endpoint)
@@ -184,7 +184,7 @@ class RequestConnector(Connector, Thread):
     def __fill_attribute_updates(self):
         for attribute_request in self.__config.get("attributeUpdates", []):
             if attribute_request.get("converter") is not None:
-                converter = TBModuleLoader.import_module("request", attribute_request["converter"])(attribute_request)
+                converter = TicosModuleLoader.import_module("request", attribute_request["converter"])(attribute_request)
             else:
                 converter = JsonRequestDownlinkConverter(attribute_request)
             attribute_request_dict = {**attribute_request, "converter": converter}
@@ -193,7 +193,7 @@ class RequestConnector(Connector, Thread):
     def __fill_rpc_requests(self):
         for rpc_request in self.__config.get("serverSideRpc", []):
             if rpc_request.get("converter") is not None:
-                converter = TBModuleLoader.import_module("request", rpc_request["converter"])(rpc_request)
+                converter = TicosModuleLoader.import_module("request", rpc_request["converter"])(rpc_request)
             else:
                 converter = JsonRequestDownlinkConverter(rpc_request)
             rpc_request_dict = {**rpc_request, "converter": converter}

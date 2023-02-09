@@ -19,7 +19,7 @@ from string import ascii_lowercase
 from threading import Thread
 from time import sleep
 
-from ticos_gateway.ticos_utility.ticos_loader import TBModuleLoader
+from ticos_gateway.ticos_utility.ticos_loader import TicosModuleLoader
 
 from ticos_gateway.grpc_connectors.gw_grpc_connector import GwGrpcConnector, log
 from ticos_gateway.grpc_connectors.gw_grpc_msg_creator import GrpcMsgCreator
@@ -66,7 +66,7 @@ class GrpcSocketConnector(GwGrpcConnector):
 
     def __load_converter(self, device):
         converter_class_name = device.get('converter', DEFAULT_UPLINK_CONVERTER)
-        module = TBModuleLoader.import_module(self._connector_type, converter_class_name)
+        module = TicosModuleLoader.import_module(self._connector_type, converter_class_name)
 
         if module:
             log.debug('Converter %s for device %s - found!', converter_class_name, self.name)

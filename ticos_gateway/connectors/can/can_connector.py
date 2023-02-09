@@ -20,14 +20,14 @@ from random import choice
 from string import ascii_lowercase
 from threading import Thread
 
-from ticos_gateway.ticos_utility.ticos_loader import TBModuleLoader
-from ticos_gateway.ticos_utility.ticos_utility import TBUtility
+from ticos_gateway.ticos_utility.ticos_loader import TicosModuleLoader
+from ticos_gateway.ticos_utility.ticos_utility import TicosUtility
 
 try:
     from can import Notifier, BufferedReader, Message, CanError, ThreadSafeBus
 except ImportError:
     print("CAN library not found - installing...")
-    TBUtility.install_package("python-can")
+    TicosUtility.install_package("python-can")
     from can import Notifier, BufferedReader, Message, CanError, ThreadSafeBus
 
 from ticos_gateway.connectors.can.bytes_can_downlink_converter import BytesCanDownlinkConverter
@@ -340,7 +340,7 @@ class CanConnector(Connector, Thread):
             to_send["deviceName"] = conf["deviceName"]
             to_send["deviceType"] = conf["deviceType"]
 
-            log.debug("[%s] Pushing to TB server '%s' device data: %s", self.get_name(), conf["deviceName"], to_send)
+            log.debug("[%s] Pushing to Ticos server '%s' device data: %s", self.get_name(), conf["deviceName"], to_send)
 
             self.__gateway.send_to_storage(self.get_name(), to_send)
             self.statistics['MessagesSent'] += 1
@@ -592,11 +592,11 @@ class CanConnector(Connector, Thread):
             if need_uplink:
                 uplink = config.get("uplink")
                 return BytesCanUplinkConverter() if uplink is None \
-                    else TBModuleLoader.import_module(self._connector_type, uplink)
+                    else TicosModuleLoader.import_module(self._connector_type, uplink)
             else:
                 downlink = config.get("downlink")
                 return BytesCanDownlinkConverter() if downlink is None \
-                    else TBModuleLoader.import_module(self._connector_type, downlink)
+                    else TicosModuleLoader.import_module(self._connector_type, downlink)
 
     def get_config(self):
         return self.__config

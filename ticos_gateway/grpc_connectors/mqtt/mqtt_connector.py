@@ -26,14 +26,14 @@ from ticos_gateway.connectors.mqtt.mqtt_connector import MqttConnector, MQTT_VER
     RESULT_CODES_V3
 from ticos_gateway.grpc_connectors.gw_grpc_connector import GwGrpcConnector, log
 from ticos_gateway.grpc_connectors.gw_grpc_msg_creator import GrpcMsgCreator
-from ticos_gateway.ticos_utility.ticos_loader import TBModuleLoader
-from ticos_gateway.ticos_utility.ticos_utility import TBUtility
+from ticos_gateway.ticos_utility.ticos_loader import TicosModuleLoader
+from ticos_gateway.ticos_utility.ticos_utility import TicosUtility
 
 try:
     from paho.mqtt.client import Client, MQTTv5
 except ImportError:
     print("paho-mqtt library not found")
-    TBUtility.install_package("paho-mqtt", version=">=1.6")
+    TicosUtility.install_package("paho-mqtt", version=">=1.6")
     from paho.mqtt.client import Client
 
 
@@ -289,7 +289,7 @@ class GrpcMqttConnector(GwGrpcConnector):
                         continue
 
                     # Find and load required class
-                    module = TBModuleLoader.import_module(self._connector_type, converter_class_name)
+                    module = TicosModuleLoader.import_module(self._connector_type, converter_class_name)
                     if module:
                         log.debug('Converter %s for topic %s - found!', converter_class_name,
                                   mapping["topicFilter"])
@@ -299,7 +299,7 @@ class GrpcMqttConnector(GwGrpcConnector):
                         continue
 
                     # Setup regexp topic acceptance list ---------------------------------------------------------------
-                    regex_topic = TBUtility.topic_to_regex(mapping["topicFilter"])
+                    regex_topic = TicosUtility.topic_to_regex(mapping["topicFilter"])
 
                     # There may be more than one converter per topic, so I'm using vectors
                     if not self.__mapping_sub_topics.get(regex_topic):
@@ -312,7 +312,7 @@ class GrpcMqttConnector(GwGrpcConnector):
 
                     log.info('Connector "%s" subscribe to %s',
                              self.get_name(),
-                             TBUtility.regex_to_topic(regex_topic))
+                             TicosUtility.regex_to_topic(regex_topic))
 
                 except Exception as e:
                     log.exception(e)
@@ -321,21 +321,21 @@ class GrpcMqttConnector(GwGrpcConnector):
             for request in [entry for entry in self.__connect_requests if entry is not None]:
                 # requests are guaranteed to have topicFilter field. See __init__
                 self.__subscribe(request["topicFilter"], request.get("subscriptionQos", 1))
-                topic_filter = TBUtility.topic_to_regex(request.get("topicFilter"))
+                topic_filter = TicosUtility.topic_to_regex(request.get("topicFilter"))
                 self.__connect_requests_sub_topics[topic_filter] = request
 
             # Setup disconnection requests handling --------------------------------------------------------------------
             for request in [entry for entry in self.__disconnect_requests if entry is not None]:
                 # requests are guaranteed to have topicFilter field. See __init__
                 self.__subscribe(request["topicFilter"], request.get("subscriptionQos", 1))
-                topic_filter = TBUtility.topic_to_regex(request.get("topicFilter"))
+                topic_filter = TicosUtility.topic_to_regex(request.get("topicFilter"))
                 self.__disconnect_requests_sub_topics[topic_filter] = request
 
             # Setup attributes requests handling -----------------------------------------------------------------------
             for request in [entry for entry in self.__attribute_requests if entry is not None]:
                 # requests are guaranteed to have topicFilter field. See __init__
                 self.__subscribe(request["topicFilter"], request.get("subscriptionQos", 1))
-                topic_filter = TBUtility.topic_to_regex(request.get("topicFilter"))
+                topic_filter = TicosUtility.topic_to_regex(request.get("topicFilter"))
                 self.__attribute_requests_sub_topics[topic_filter] = request
         else:
             result_codes = RESULT_CODES_V5 if self._mqtt_version == 5 else RESULT_CODES_V3
@@ -418,7 +418,7 @@ class GrpcMqttConnector(GwGrpcConnector):
                 client, userdata, message = self._on_message_queue.get()
 
                 self.statistics['MessagesReceived'] += 1
-                content = TBUtility.decode(message)
+                content = TicosUtility.decode(message)
 
                 # Check if message topic exists in mappings "i.e., I'm posting telemetry/attributes" -------------------
                 topic_handlers = [regex for regex in self.__mapping_sub_topics if fullmatch(regex, message.topic)]
@@ -477,7 +477,7 @@ class GrpcMqttConnector(GwGrpcConnector):
                             if device_name_match is not None:
                                 found_device_name = device_name_match.group(0)
                         elif handler.get("deviceNameJsonExpression"):
-                            found_device_name = TBUtility.get_value(handler["deviceNameJsonExpression"], content)
+                            found_device_name = TicosUtility.get_value(handler["deviceNameJsonExpression"], content)
 
                         # Get device type (if any), either from topic or from content
                         if handler.get("deviceTypeTopicExpression"):
@@ -485,7 +485,7 @@ class GrpcMqttConnector(GwGrpcConnector):
                             found_device_type = device_type_match.group(0) if device_type_match is not None else \
                                 handler["deviceTypeTopicExpression"]
                         elif handler.get("deviceTypeJsonExpression"):
-                            found_device_type = TBUtility.get_value(handler["deviceTypeJsonExpression"], content)
+                            found_device_type = TicosUtility.get_value(handler["deviceTypeJsonExpression"], content)
 
                         if found_device_name is None:
                             log.error("Device name missing from connection request")
@@ -516,7 +516,7 @@ class GrpcMqttConnector(GwGrpcConnector):
                             if device_name_match is not None:
                                 found_device_name = device_name_match.group(0)
                         elif handler.get("deviceNameJsonExpression"):
-                            found_device_name = TBUtility.get_value(handler["deviceNameJsonExpression"], content)
+                            found_device_name = TicosUtility.get_value(handler["deviceNameJsonExpression"], content)
 
                         # Get device type (if any), either from topic or from content
                         if handler.get("deviceTypeTopicExpression"):
@@ -524,7 +524,7 @@ class GrpcMqttConnector(GwGrpcConnector):
                             if device_type_match is not None:
                                 found_device_type = device_type_match.group(0)
                         elif handler.get("deviceTypeJsonExpression"):
-                            found_device_type = TBUtility.get_value(handler["deviceTypeJsonExpression"], content)
+                            found_device_type = TicosUtility.get_value(handler["deviceTypeJsonExpression"], content)
 
                         if found_device_name is None:
                             log.error("Device name missing from disconnection request")
@@ -559,7 +559,7 @@ class GrpcMqttConnector(GwGrpcConnector):
                                 if device_name_match is not None:
                                     found_device_name = device_name_match.group(0)
                             elif handler.get("deviceNameJsonExpression"):
-                                found_device_name = TBUtility.get_value(handler["deviceNameJsonExpression"], content)
+                                found_device_name = TicosUtility.get_value(handler["deviceNameJsonExpression"], content)
 
                             # Get attribute name, either from topic or from content
                             if handler.get("attributeNameTopicExpression"):
@@ -568,7 +568,7 @@ class GrpcMqttConnector(GwGrpcConnector):
                                     found_attribute_names = attribute_name_match.group(0)
                             elif handler.get("attributeNameJsonExpression"):
                                 found_attribute_names = list(filter(lambda x: x is not None,
-                                                                    TBUtility.get_values(
+                                                                    TicosUtility.get_values(
                                                                         handler["attributeNameJsonExpression"],
                                                                         content)))
 
@@ -684,7 +684,7 @@ class GrpcMqttConnector(GwGrpcConnector):
                 .replace("${methodName}", str(content['data']['method'])) \
                 .replace("${requestId}", str(content["data"]["id"]))
 
-            expected_response_topic = TBUtility.replace_params_tags(expected_response_topic, content)
+            expected_response_topic = TicosUtility.replace_params_tags(expected_response_topic, content)
 
             timeout = time() * 1000 + rpc_config.get("responseTimeout")
 
@@ -710,12 +710,12 @@ class GrpcMqttConnector(GwGrpcConnector):
             .replace("${methodName}", str(content['data']['method'])) \
             .replace("${requestId}", str(content["data"]["id"]))
 
-        request_topic = TBUtility.replace_params_tags(request_topic, content)
+        request_topic = TicosUtility.replace_params_tags(request_topic, content)
 
-        data_to_send_tags = TBUtility.get_values(rpc_config.get('valueExpression'), content['data'],
+        data_to_send_tags = TicosUtility.get_values(rpc_config.get('valueExpression'), content['data'],
                                                  'params',
                                                  get_tag=True)
-        data_to_send_values = TBUtility.get_values(rpc_config.get('valueExpression'), content['data'],
+        data_to_send_values = TicosUtility.get_values(rpc_config.get('valueExpression'), content['data'],
                                                    'params',
                                                    expression_instead_none=True)
 

@@ -15,7 +15,7 @@
 from bacpypes.local.device import LocalDeviceObject
 
 
-class TBBACnetDevice(LocalDeviceObject):
+class TicosBACnetDevice(LocalDeviceObject):
     def __init__(self, configuration):
         assert configuration is not None
         super().__init__(**configuration)

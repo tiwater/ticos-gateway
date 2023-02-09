@@ -22,14 +22,14 @@ from time import sleep
 
 from simplejson import dumps, load
 
-from ticos_gateway.ticos_utility.ticos_loader import TBModuleLoader
-from ticos_gateway.ticos_utility.ticos_utility import TBUtility
+from ticos_gateway.ticos_utility.ticos_loader import TicosModuleLoader
+from ticos_gateway.ticos_utility.ticos_utility import TicosUtility
 
 try:
     import pyodbc
 except ImportError:
     print("ODBC library not found - installing...")
-    TBUtility.install_package("pyodbc")
+    TicosUtility.install_package("pyodbc")
     import pyodbc
 
 from ticos_gateway.connectors.odbc.odbc_uplink_converter import OdbcUplinkConverter
@@ -75,7 +75,7 @@ class OdbcConnector(Connector, Thread):
         self.__timeseries_columns = []
 
         self.__converter = OdbcUplinkConverter() if not self.__config.get("converter", "") else \
-            TBModuleLoader.import_module(self._connector_type, self.__config["converter"])
+            TicosModuleLoader.import_module(self._connector_type, self.__config["converter"])
 
         self.__configure_pyodbc()
         self.__parse_rpc_config()
@@ -99,7 +99,7 @@ class OdbcConnector(Connector, Thread):
     def on_attributes_update(self, content):
         pass
 
-    @StatisticsService.CollectAllReceivedBytesStatistics(start_stat_type='allReceivedBytesFromTB')
+    @StatisticsService.CollectAllReceivedBytesStatistics(start_stat_type='allReceivedBytesFromTicos')
     def server_side_rpc_handler(self, content):
         done = False
         try:
@@ -288,7 +288,7 @@ class OdbcConnector(Connector, Thread):
 
             to_send['telemetry'] = {'ts': new_data.get('ts', int(time()) * 1000), 'values': new_data['telemetry']}
 
-            log.debug("[%s] Pushing to TB server '%s' device data: %s", self.get_name(), device_name, to_send)
+            log.debug("[%s] Pushing to Ticos server '%s' device data: %s", self.get_name(), device_name, to_send)
 
             to_send['telemetry'] = [to_send['telemetry']]
             self.__gateway.send_to_storage(self.get_name(), to_send)

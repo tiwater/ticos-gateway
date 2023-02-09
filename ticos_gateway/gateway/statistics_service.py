@@ -10,8 +10,8 @@ class StatisticsService(Thread):
     DATA_STREAMS_STATISTICS = {
         'receivedBytesFromDevices': 0,
         'convertedBytesFromDevice': 0,
-        'allReceivedBytesFromTB': 0,
-        'allBytesSentToTB': 0,
+        'allReceivedBytesFromTicos': 0,
+        'allBytesSentToTicos': 0,
         'allBytesSentToDevices': 0,
     }
 
@@ -50,8 +50,8 @@ class StatisticsService(Thread):
         cls.DATA_STREAMS_STATISTICS = {
             'receivedBytesFromDevices': 0,
             'convertedBytesFromDevice': 0,
-            'allReceivedBytesFromTB': 0,
-            'allBytesSentToTB': 0,
+            'allReceivedBytesFromTicos': 0,
+            'allBytesSentToTicos': 0,
             'allBytesSentToDevices': 0,
         }
 
@@ -122,7 +122,7 @@ class StatisticsService(Thread):
 
             return inner
 
-    class CollectAllSentTBBytesStatistics(CollectAllReceivedBytesStatistics):
+    class CollectAllSentTicosBytesStatistics(CollectAllReceivedBytesStatistics):
         def __call__(self, func):
             return super().__call__(func)
 

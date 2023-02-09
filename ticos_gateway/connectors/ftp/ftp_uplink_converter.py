@@ -19,7 +19,7 @@ from simplejson import dumps
 
 from ticos_gateway.connectors.converter import log
 from ticos_gateway.connectors.ftp.ftp_converter import FTPConverter
-from ticos_gateway.ticos_utility.ticos_utility import TBUtility
+from ticos_gateway.ticos_utility.ticos_utility import TicosUtility
 from ticos_gateway.gateway.statistics_service import StatisticsService
 
 
@@ -118,9 +118,9 @@ class FTPUplinkConverter(FTPConverter):
 
         try:
             if self.__config.get("devicePatternName") is not None:
-                device_name_tags = TBUtility.get_values(self.__config.get("devicePatternName"), data,
+                device_name_tags = TicosUtility.get_values(self.__config.get("devicePatternName"), data,
                                                         get_tag=True)
-                device_name_values = TBUtility.get_values(self.__config.get("devicePatternName"), data,
+                device_name_values = TicosUtility.get_values(self.__config.get("devicePatternName"), data,
                                                           expression_instead_none=True)
 
                 dict_result["deviceName"] = self.__config.get("devicePatternName")
@@ -135,9 +135,9 @@ class FTPUplinkConverter(FTPConverter):
                 log.error("The expression for looking \"deviceName\" not found in config %s", dumps(self.__config))
 
             if self.__config.get("devicePatternType") is not None:
-                device_type_tags = TBUtility.get_values(self.__config.get("devicePatternType"), data,
+                device_type_tags = TicosUtility.get_values(self.__config.get("devicePatternType"), data,
                                                         get_tag=True)
-                device_type_values = TBUtility.get_values(self.__config.get("devicePatternType"), data,
+                device_type_values = TicosUtility.get_values(self.__config.get("devicePatternType"), data,
                                                           expression_instead_none=True)
                 dict_result["deviceType"] = self.__config.get("devicePatternType")
 
@@ -156,14 +156,14 @@ class FTPUplinkConverter(FTPConverter):
                 dict_result[self.__data_types[datatype]] = []
 
                 for datatype_config in self.__config.get(datatype, []):
-                    values = TBUtility.get_values(datatype_config["value"], data, datatype_config["type"],
+                    values = TicosUtility.get_values(datatype_config["value"], data, datatype_config["type"],
                                                   expression_instead_none=True)
-                    values_tags = TBUtility.get_values(datatype_config["value"], data, datatype_config["type"],
+                    values_tags = TicosUtility.get_values(datatype_config["value"], data, datatype_config["type"],
                                                        get_tag=True)
 
-                    keys = TBUtility.get_values(datatype_config["key"], data, datatype_config["type"],
+                    keys = TicosUtility.get_values(datatype_config["key"], data, datatype_config["type"],
                                                 expression_instead_none=True)
-                    keys_tags = TBUtility.get_values(datatype_config["key"], data, get_tag=True)
+                    keys_tags = TicosUtility.get_values(datatype_config["key"], data, get_tag=True)
 
                     full_key = datatype_config["key"]
                     for (key, key_tag) in zip(keys, keys_tags):

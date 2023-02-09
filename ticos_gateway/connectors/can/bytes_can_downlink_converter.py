@@ -20,7 +20,7 @@ from ticos_gateway.gateway.statistics_service import StatisticsService
 
 
 class BytesCanDownlinkConverter(CanConverter):
-    @StatisticsService.CollectStatistics(start_stat_type='allReceivedBytesFromTB',
+    @StatisticsService.CollectStatistics(start_stat_type='allReceivedBytesFromTicos',
                                          end_stat_type='allBytesSentToDevices')
     def convert(self, config, data):
         try:
@@ -28,7 +28,7 @@ class BytesCanDownlinkConverter(CanConverter):
                 return list(bytearray.fromhex(config["dataInHex"]))
 
             if not isinstance(data, dict) or not data:
-                log.error("Failed to convert TB data to CAN payload: data is empty or not a dictionary")
+                log.error("Failed to convert Ticos data to CAN payload: data is empty or not a dictionary")
                 return
 
             if data.get("dataInHex", ""):
@@ -41,7 +41,7 @@ class BytesCanDownlinkConverter(CanConverter):
             elif "value" in data:
                 value = data["value"]
             else:
-                log.error("Failed to convert TB data to CAN payload: no `value` or `dataExpression` property")
+                log.error("Failed to convert Ticos data to CAN payload: no `value` or `dataExpression` property")
                 return
 
             can_data = []
@@ -67,5 +67,5 @@ class BytesCanDownlinkConverter(CanConverter):
 
             return can_data
         except Exception as e:
-            log.error("Failed to convert TB data to CAN payload: %s", str(e))
+            log.error("Failed to convert Ticos data to CAN payload: %s", str(e))
             return

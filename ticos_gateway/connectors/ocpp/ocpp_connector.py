@@ -26,21 +26,21 @@ from simplejson import dumps
 
 from ticos_gateway.connectors.connector import Connector, log
 from ticos_gateway.gateway.statistics_service import StatisticsService
-from ticos_gateway.ticos_utility.ticos_utility import TBUtility
+from ticos_gateway.ticos_utility.ticos_utility import TicosUtility
 from ticos_gateway.connectors.ocpp.charge_point import ChargePoint
 
 try:
     import ocpp
 except ImportError:
     print('OCPP library not found - installing...')
-    TBUtility.install_package("ocpp")
+    TicosUtility.install_package("ocpp")
     import ocpp
 
 try:
     import websockets
 except ImportError:
     print('websockets library not found - installing...')
-    TBUtility.install_package("websockets")
+    TicosUtility.install_package("websockets")
     import websockets
 
 from ocpp.v16 import call
@@ -249,7 +249,7 @@ class OcppConnector(Connector, Thread):
     async def _send_request(cp, request):
         return await cp.call(request)
 
-    @StatisticsService.CollectAllReceivedBytesStatistics(start_stat_type='allReceivedBytesFromTB')
+    @StatisticsService.CollectAllReceivedBytesStatistics(start_stat_type='allReceivedBytesFromTicos')
     def on_attributes_update(self, content):
         self._log.debug('Got attribute update: %s', content)
 
@@ -276,7 +276,7 @@ class OcppConnector(Connector, Thread):
         except Exception as e:
             self._log.exception(e)
 
-    @StatisticsService.CollectAllReceivedBytesStatistics(start_stat_type='allReceivedBytesFromTB')
+    @StatisticsService.CollectAllReceivedBytesStatistics(start_stat_type='allReceivedBytesFromTicos')
     def server_side_rpc_handler(self, content):
         self._log.debug('Got RPC: %s', content)
 
@@ -289,10 +289,10 @@ class OcppConnector(Connector, Thread):
         try:
             for rpc in charge_point.config.get('serverSideRpc', []):
                 if rpc['methodRPC'] == content['data']['method']:
-                    data_to_send_tags = TBUtility.get_values(rpc.get('valueExpression'), content['data'],
+                    data_to_send_tags = TicosUtility.get_values(rpc.get('valueExpression'), content['data'],
                                                              'params',
                                                              get_tag=True)
-                    data_to_send_values = TBUtility.get_values(rpc.get('valueExpression'), content['data'],
+                    data_to_send_values = TicosUtility.get_values(rpc.get('valueExpression'), content['data'],
                                                                'params',
                                                                expression_instead_none=True)
 

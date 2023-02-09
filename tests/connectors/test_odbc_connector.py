@@ -21,7 +21,7 @@ from unittest.mock import Mock, call
 
 import pyodbc
 from simplejson import load
-from ticos_gateway.ticos_utility.ticos_utility import TBUtility
+from ticos_gateway.ticos_utility.ticos_utility import TicosUtility
 
 import ticos_gateway
 from ticos_gateway.connectors.odbc.odbc_connector import OdbcConnector
@@ -46,7 +46,7 @@ if IS_ODBC_DRIVER_WITH_STORED_PROCEDURE_INSTALLED:
         import testing.postgresql
     except ImportError:
         print("ODBC library not found - installing...")
-        TBUtility.install_package("testing.postgresql")
+        TicosUtility.install_package("testing.postgresql")
         import testing.postgresql
 
 
@@ -59,7 +59,7 @@ class OdbcConnectorTests(unittest.TestCase):
     POSTGRES_PORT = 12345
 
     def setUp(self):
-        self.gateway = Mock(spec=ticos_gateway.TBGatewayService)
+        self.gateway = Mock(spec=ticos_gateway.TicosGatewayService)
         self.gateway.get_config_path.return_value = self.CONFIG_PATH
 
         self.connector = None

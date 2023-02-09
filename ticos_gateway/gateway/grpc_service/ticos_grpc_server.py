@@ -6,7 +6,7 @@ import ticos_gateway.gateway.proto.messages_pb2_grpc as messages_pb2_grpc
 from ticos_gateway.gateway.proto.messages_pb2 import *
 
 
-class TBGRPCServer(messages_pb2_grpc.TBGatewayProtoServiceServicer):
+class TicosGRPCServer(messages_pb2_grpc.TicosGatewayProtoServiceServicer):
     def __init__(self, read_callback):
         self._read_callback = read_callback
         self.__writing_queue_creation_lock = RLock()

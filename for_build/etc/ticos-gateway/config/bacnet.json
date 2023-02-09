@@ -1,6 +1,6 @@
 {
   "general": {
-    "objectName": "TB_gateway",
+    "objectName": "Ticos_gateway",
     "address": "0.0.0.0:47808",
     "objectIdentifier": 599,
     "maxApduLengthAccepted": 1476,

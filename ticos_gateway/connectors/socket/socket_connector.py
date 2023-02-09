@@ -23,7 +23,7 @@ from time import sleep
 from simplejson import dumps
 
 from ticos_gateway.connectors.connector import Connector, log
-from ticos_gateway.ticos_utility.ticos_loader import TBModuleLoader
+from ticos_gateway.ticos_utility.ticos_loader import TicosModuleLoader
 from ticos_gateway.gateway.statistics_service import StatisticsService
 from ticos_gateway.connectors.socket.socket_decorators import CustomCollectStatistics
 
@@ -85,7 +85,7 @@ class SocketConnector(Connector, Thread):
 
     def __load_converter(self, device):
         converter_class_name = device.get('converter', DEFAULT_UPLINK_CONVERTER)
-        module = TBModuleLoader.import_module(self._connector_type, converter_class_name)
+        module = TicosModuleLoader.import_module(self._connector_type, converter_class_name)
 
         if module:
             log.debug('Converter %s for device %s - found!', converter_class_name, self.name)
@@ -320,7 +320,7 @@ class SocketConnector(Connector, Thread):
         new_socket.sendto(value, (address, int(port)))
         new_socket.close()
 
-    @StatisticsService.CollectAllReceivedBytesStatistics(start_stat_type='allReceivedBytesFromTB')
+    @StatisticsService.CollectAllReceivedBytesStatistics(start_stat_type='allReceivedBytesFromTicos')
     def on_attributes_update(self, content):
         try:
             device = tuple(filter(lambda item: item['deviceName'] == content['device'], self.__config['devices']))[0]
@@ -335,7 +335,7 @@ class SocketConnector(Connector, Thread):
         except IndexError:
             self.__log.error('Device not found')
 
-    @StatisticsService.CollectAllReceivedBytesStatistics(start_stat_type='allReceivedBytesFromTB')
+    @StatisticsService.CollectAllReceivedBytesStatistics(start_stat_type='allReceivedBytesFromTicos')
     def server_side_rpc_handler(self, content):
         try:
             device = tuple(filter(lambda item: item['deviceName'] == content['device'], self.__config['devices']))[0]

@@ -19,14 +19,14 @@ from string import ascii_lowercase
 from threading import Thread
 from queue import Queue
 
-from ticos_gateway.ticos_utility.ticos_utility import TBUtility
+from ticos_gateway.ticos_utility.ticos_utility import TicosUtility
 from ticos_gateway.gateway.statistics_service import StatisticsService
 
 try:
     from bleak import BleakScanner
 except ImportError:
     print("BLE library not found - installing...")
-    TBUtility.install_package("bleak")
+    TicosUtility.install_package("bleak")
 
 from ticos_gateway.connectors.connector import Connector, log
 from ticos_gateway.connectors.ble.device import Device
@@ -124,7 +124,7 @@ class BLEConnector(Connector, Thread):
             else:
                 sleep(.2)
 
-    @StatisticsService.CollectAllReceivedBytesStatistics(start_stat_type='allReceivedBytesFromTB')
+    @StatisticsService.CollectAllReceivedBytesStatistics(start_stat_type='allReceivedBytesFromTicos')
     def on_attributes_update(self, content):
         try:
             device = tuple(filter(lambda i: i.getName() == content['device'], self.__devices))[0]
@@ -139,7 +139,7 @@ class BLEConnector(Connector, Thread):
         except IndexError:
             log.error('Device not found')
 
-    @StatisticsService.CollectAllReceivedBytesStatistics(start_stat_type='allReceivedBytesFromTB')
+    @StatisticsService.CollectAllReceivedBytesStatistics(start_stat_type='allReceivedBytesFromTicos')
     def server_side_rpc_handler(self, content):
         try:
             device = tuple(filter(lambda i: i.getName() == content['device'], self.__devices))[0]

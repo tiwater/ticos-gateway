@@ -17,7 +17,7 @@ import struct
 from simplejson import dumps
 
 from ticos_gateway.connectors.request.request_converter import RequestConverter, log
-from ticos_gateway.ticos_utility.ticos_utility import TBUtility
+from ticos_gateway.ticos_utility.ticos_utility import TicosUtility
 
 
 class CustomRequestUplinkConverter(RequestConverter):
@@ -28,8 +28,8 @@ class CustomRequestUplinkConverter(RequestConverter):
     def convert(self, _, body):
         try:
             data = body["data"]["value"]
-            self.dict_result["deviceName"] = TBUtility.get_value(self.__config.get("deviceNameJsonExpression"), body, expression_instead_none=True)
-            self.dict_result["deviceType"] = TBUtility.get_value(self.__config.get("deviceTypeJsonExpression"), body, expression_instead_none=True)
+            self.dict_result["deviceName"] = TicosUtility.get_value(self.__config.get("deviceNameJsonExpression"), body, expression_instead_none=True)
+            self.dict_result["deviceType"] = TicosUtility.get_value(self.__config.get("deviceTypeJsonExpression"), body, expression_instead_none=True)
             self.dict_result["attributes"] = []
             self.dict_result["telemetry"] = []
             converted_bytes = bytearray.fromhex(data)

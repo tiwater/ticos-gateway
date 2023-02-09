@@ -17,7 +17,7 @@ from time import time
 from datetime import timezone
 
 from ticos_gateway.connectors.opcua.opcua_converter import OpcUaConverter, log
-from ticos_gateway.ticos_utility.ticos_utility import TBUtility
+from ticos_gateway.ticos_utility.ticos_utility import TicosUtility
 
 
 class GrpcOpcUaUplinkConverter(OpcUaConverter):
@@ -34,7 +34,7 @@ class GrpcOpcUaUplinkConverter(OpcUaConverter):
             information_types = {"attributes": "attributes", "timeseries": "telemetry"}
             for information_type in information_types:
                 for information in self.__config[information_type]:
-                    path = TBUtility.get_value(information["path"], get_tag=True)
+                    path = TicosUtility.get_value(information["path"], get_tag=True)
                     if isinstance(config, tuple):
                         config_information = config[0].replace('\\\\', '\\') if path == config[0].replace('\\\\',
                                                                                                           '\\') or fullmatch(

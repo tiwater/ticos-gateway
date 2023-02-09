@@ -21,8 +21,8 @@ from threading import Thread
 from time import sleep, time
 
 from ticos_gateway.connectors.connector import Connector, log
-from ticos_gateway.ticos_utility.ticos_loader import TBModuleLoader
-from ticos_gateway.ticos_utility.ticos_utility import TBUtility
+from ticos_gateway.ticos_utility.ticos_loader import TicosModuleLoader
+from ticos_gateway.ticos_utility.ticos_utility import TicosUtility
 
 # Try import Pymodbus library or install it and import
 installation_required = False
@@ -37,7 +37,7 @@ except ImportError:
 
 if installation_required:
     print("Modbus library not found - installing...")
-    TBUtility.install_package("puresnmp", ">=2.0.0")
+    TicosUtility.install_package("puresnmp", ">=2.0.0")
 
 from puresnmp import Client, credentials, PyWrapper
 from puresnmp.exc import Timeout as SNMPTimeoutException
@@ -209,10 +209,10 @@ class SNMPConnector(Connector, Thread):
     def __fill_converters(self):
         try:
             for device in self.__devices:
-                device["uplink_converter"] = TBModuleLoader.import_module("snmp", device.get('converter',
+                device["uplink_converter"] = TicosModuleLoader.import_module("snmp", device.get('converter',
                                                                                              self._default_converters[
                                                                                                  "uplink"]))(device)
-                device["downlink_converter"] = TBModuleLoader.import_module("snmp", device.get('converter',
+                device["downlink_converter"] = TicosModuleLoader.import_module("snmp", device.get('converter',
                                                                                                self._default_converters[
                                                                                                    "downlink"]))(device)
         except Exception as e:

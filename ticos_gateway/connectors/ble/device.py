@@ -33,7 +33,7 @@ from bleak import BleakClient, BleakScanner
 
 from ticos_gateway.connectors.connector import log
 from ticos_gateway.gateway.statistics_service import StatisticsService
-from ticos_gateway.ticos_utility.ticos_loader import TBModuleLoader
+from ticos_gateway.ticos_utility.ticos_loader import TicosModuleLoader
 from ticos_gateway.connectors.ble.error_handler import ErrorHandler
 
 MAC_ADDRESS_FORMAT = {
@@ -120,7 +120,7 @@ class Device(Thread):
         return mac_address.upper()
 
     def __load_converter(self, name):
-        module = TBModuleLoader.import_module(self.__connector_type, name)
+        module = TicosModuleLoader.import_module(self.__connector_type, name)
 
         if module:
             log.debug('Converter %s for device %s - found!', name, self.name)

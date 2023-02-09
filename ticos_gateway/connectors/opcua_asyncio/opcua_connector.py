@@ -22,14 +22,14 @@ from queue import Queue
 
 from ticos_gateway.connectors.connector import Connector, log
 from ticos_gateway.connectors.opcua_asyncio.device import Device
-from ticos_gateway.ticos_utility.ticos_loader import TBModuleLoader
-from ticos_gateway.ticos_utility.ticos_utility import TBUtility
+from ticos_gateway.ticos_utility.ticos_loader import TicosModuleLoader
+from ticos_gateway.ticos_utility.ticos_utility import TicosUtility
 
 try:
     import asyncua
 except ImportError:
     print("OPC-UA library not found")
-    TBUtility.install_package("asyncua")
+    TicosUtility.install_package("asyncua")
     import asyncua
 
 from asyncua.crypto.security_policies import SecurityPolicyBasic256Sha256, SecurityPolicyBasic256, \
@@ -203,7 +203,7 @@ class OpcUaConnectorAsyncIO(Connector, Thread):
 
     def __load_converter(self, device):
         converter_class_name = device.get('converter', DEFAULT_UPLINK_CONVERTER)
-        module = TBModuleLoader.import_module(self._connector_type, converter_class_name)
+        module = TicosModuleLoader.import_module(self._connector_type, converter_class_name)
 
         if module:
             log.debug('Converter %s for device %s - found!', converter_class_name, self.name)

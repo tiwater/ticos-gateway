@@ -19,7 +19,7 @@ from ocpp.v16.enums import Action, RegistrationStatus, DataTransferStatus
 from ocpp.v16 import call_result
 from datetime import datetime
 
-from ticos_gateway.ticos_utility.ticos_loader import TBModuleLoader
+from ticos_gateway.ticos_utility.ticos_loader import TicosModuleLoader
 
 
 class ChargePoint(CP):
@@ -54,7 +54,7 @@ class ChargePoint(CP):
 
     @staticmethod
     def _load_converter(converter_name):
-        return TBModuleLoader.import_module('ocpp', converter_name)
+        return TicosModuleLoader.import_module('ocpp', converter_name)
 
     async def close(self):
         self._stopped = True

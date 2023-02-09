@@ -22,7 +22,7 @@ from ticos_gateway.connectors.modbus.constants import *
 from ticos_gateway.connectors.connector import log
 from ticos_gateway.grpc_connectors.gw_grpc_msg_creator import GrpcMsgCreator
 from ticos_gateway.grpc_connectors.modbus.bytes_modbus_uplink_converter import GrpcBytesModbusUplinkConverter
-from ticos_gateway.ticos_utility.ticos_loader import TBModuleLoader
+from ticos_gateway.ticos_utility.ticos_loader import TicosModuleLoader
 
 
 class Slave(Thread):
@@ -94,13 +94,13 @@ class Slave(Thread):
     def __load_converters(self, connector, connector_key):
         try:
             if self.config.get(UPLINK_PREFIX + CONVERTER_PARAMETER) is not None:
-                converter = TBModuleLoader.import_module(connector.connector_type,
+                converter = TicosModuleLoader.import_module(connector.connector_type,
                                                          self.config[UPLINK_PREFIX + CONVERTER_PARAMETER])(self)
             else:
                 converter = GrpcBytesModbusUplinkConverter({**self.config, 'deviceName': self.name})
 
             if self.config.get(DOWNLINK_PREFIX + CONVERTER_PARAMETER) is not None:
-                downlink_converter = TBModuleLoader.import_module(connector.connector_type, self.config[
+                downlink_converter = TicosModuleLoader.import_module(connector.connector_type, self.config[
                     DOWNLINK_PREFIX + CONVERTER_PARAMETER])(self)
             else:
                 downlink_converter = BytesModbusDownlinkConverter(self.config)

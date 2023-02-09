@@ -26,22 +26,22 @@ import requests
 from requests.auth import HTTPBasicAuth as HTTPBasicAuthRequest
 from requests.exceptions import RequestException
 
-from ticos_gateway.ticos_utility.ticos_loader import TBModuleLoader
-from ticos_gateway.ticos_utility.ticos_utility import TBUtility
+from ticos_gateway.ticos_utility.ticos_loader import TicosModuleLoader
+from ticos_gateway.ticos_utility.ticos_utility import TicosUtility
 from ticos_gateway.connectors.connector import Connector, log
 
 try:
     from requests import Timeout, request as regular_request
 except ImportError:
     print("Requests library not found - installing...")
-    TBUtility.install_package("requests")
+    TicosUtility.install_package("requests")
     from requests import Timeout, request as regular_request
 
 try:
     from aiohttp import web, BasicAuth
 except ImportError:
     print('AIOHTTP library not found - installing...')
-    TBUtility.install_package('aiohttp')
+    TicosUtility.install_package('aiohttp')
     from aiohttp import web, BasicAuth
 
 requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS += ':ADH-AES128-SHA256'
@@ -64,9 +64,9 @@ class RESTConnector(Connector, Thread):
         self.statistics = {'MessagesReceived': 0,
                            'MessagesSent': 0}
         self.__gateway = gateway
-        self._default_downlink_converter = TBModuleLoader.import_module(self._connector_type,
+        self._default_downlink_converter = TicosModuleLoader.import_module(self._connector_type,
                                                                         self._default_converters['downlink'])
-        self._default_uplink_converter = TBModuleLoader.import_module(self._connector_type,
+        self._default_uplink_converter = TicosModuleLoader.import_module(self._connector_type,
                                                                       self._default_converters['uplink'])
         self.__USER_DATA = {}
         self.setName(config.get("name", 'REST Connector ' + ''.join(choice(ascii_lowercase) for _ in range(5))))
@@ -77,12 +77,12 @@ class RESTConnector(Connector, Thread):
         self.__attribute_type = {}
         self.__rpc_requests = []
         self.__attribute_updates = []
-        self.__fill_requests_from_TB()
+        self.__fill_requests_from_Ticos()
 
     def load_endpoints(self):
         endpoints = {}
         for mapping in self.__config.get("mapping"):
-            converter = TBModuleLoader.import_module(self._connector_type,
+            converter = TicosModuleLoader.import_module(self._connector_type,
                                                      mapping['converter'].get("extension",
                                                                               self._default_converters["uplink"]))
             endpoints.update({mapping['endpoint']: {"config": mapping, "converter": converter}})
@@ -281,19 +281,19 @@ class RESTConnector(Connector, Thread):
         self.__gateway.send_to_storage(connector_name, data)
         self.statistics["MessagesSent"] = self.statistics["MessagesSent"] + 1
 
-    def __fill_requests_from_TB(self):
+    def __fill_requests_from_Ticos(self):
         requests_from_ticos = {
             "attributeUpdates": self.__attribute_updates,
             "serverSideRpc": self.__rpc_requests,
         }
         for request_section in requests_from_ticos:
             for request_config_object in self.__config.get(request_section, []):
-                uplink_converter = TBModuleLoader.import_module(self._connector_type,
+                uplink_converter = TicosModuleLoader.import_module(self._connector_type,
                                                                 request_config_object.get("extension",
                                                                                           self._default_converters[
                                                                                               "uplink"]))(
                     request_config_object)
-                downlink_converter = TBModuleLoader.import_module(self._connector_type,
+                downlink_converter = TicosModuleLoader.import_module(self._connector_type,
                                                                   request_config_object.get("extension",
                                                                                             self._default_converters[
                                                                                                 "downlink"]))(
@@ -458,9 +458,9 @@ class BaseDataHandler:
 
     def processed_attribute_request(self, data):
         if self.__endpoint.get('type') == 'attributeRequest':
-            device_name_tags = TBUtility.get_values(self.__endpoint['config'].get("deviceNameExpression"), data,
+            device_name_tags = TicosUtility.get_values(self.__endpoint['config'].get("deviceNameExpression"), data,
                                                     get_tag=True)
-            device_name_values = TBUtility.get_values(self.__endpoint['config'].get("deviceNameExpression"), data,
+            device_name_values = TicosUtility.get_values(self.__endpoint['config'].get("deviceNameExpression"), data,
                                                       expression_instead_none=True)
 
             device_name = self.__endpoint['config'].get("deviceNameExpression")
@@ -475,7 +475,7 @@ class BaseDataHandler:
                 return False
 
             found_attribute_names = list(filter(lambda x: x is not None,
-                                                TBUtility.get_values(
+                                                TicosUtility.get_values(
                                                     self.__endpoint['config'].get("attributeNameExpression"),
                                                     data)))
 

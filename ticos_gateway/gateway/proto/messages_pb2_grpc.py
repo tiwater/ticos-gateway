@@ -5,7 +5,7 @@ import grpc
 import ticos_gateway.gateway.proto.messages_pb2 as messages__pb2
 
 
-class TBGatewayProtoServiceStub(object):
+class TicosGatewayProtoServiceStub(object):
     """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
@@ -15,13 +15,13 @@ class TBGatewayProtoServiceStub(object):
             channel: A grpc.Channel.
         """
         self.stream = channel.unary_unary(
-                '/messages.TBGatewayProtoService/stream',
+                '/messages.TicosGatewayProtoService/stream',
                 request_serializer=messages__pb2.FromConnectorMessage.SerializeToString,
                 response_deserializer=messages__pb2.FromServiceMessage.FromString,
                 )
 
 
-class TBGatewayProtoServiceServicer(object):
+class TicosGatewayProtoServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def stream(self, request, context):
@@ -31,7 +31,7 @@ class TBGatewayProtoServiceServicer(object):
         raise NotImplementedError('Method not implemented!')
 
 
-def add_TBGatewayProtoServiceServicer_to_server(servicer, server):
+def add_TicosGatewayProtoServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'stream': grpc.unary_unary_rpc_method_handler(
                     servicer.stream,
@@ -40,12 +40,12 @@ def add_TBGatewayProtoServiceServicer_to_server(servicer, server):
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'messages.TBGatewayProtoService', rpc_method_handlers)
+            'messages.TicosGatewayProtoService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
  # This class is part of an EXPERIMENTAL API.
-class TBGatewayProtoService(object):
+class TicosGatewayProtoService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
@@ -59,7 +59,7 @@ class TBGatewayProtoService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/messages.TBGatewayProtoService/stream',
+        return grpc.experimental.unary_unary(request, target, '/messages.TicosGatewayProtoService/stream',
             messages__pb2.FromConnectorMessage.SerializeToString,
             messages__pb2.FromServiceMessage.FromString,
             options, channel_credentials,

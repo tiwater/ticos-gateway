@@ -17,7 +17,7 @@ from re import findall
 from time import time
 
 from ticos_gateway.connectors.xmpp.xmpp_converter import XmppConverter, log
-from ticos_gateway.ticos_utility.ticos_utility import TBUtility
+from ticos_gateway.ticos_utility.ticos_utility import TicosUtility
 from ticos_gateway.gateway.statistics_service import StatisticsService
 
 
@@ -32,9 +32,9 @@ class XmppUplinkConverter(XmppConverter):
         try:
             data = json.loads(val)
 
-            device_name_tags = TBUtility.get_values(self.__config.get("deviceNameExpression"), data,
+            device_name_tags = TicosUtility.get_values(self.__config.get("deviceNameExpression"), data,
                                                     get_tag=True)
-            device_name_values = TBUtility.get_values(self.__config.get("deviceNameExpression"), data,
+            device_name_values = TicosUtility.get_values(self.__config.get("deviceNameExpression"), data,
                                                       expression_instead_none=True)
 
             dict_result['deviceName'] = self.__config.get("deviceNameExpression")
@@ -45,9 +45,9 @@ class XmppUplinkConverter(XmppConverter):
                                                                               str(device_name_value)) \
                     if is_valid_key else device_name_tag
 
-            device_type_tags = TBUtility.get_values(self.__config.get("deviceTypeExpression"), data,
+            device_type_tags = TicosUtility.get_values(self.__config.get("deviceTypeExpression"), data,
                                                     get_tag=True)
-            device_type_values = TBUtility.get_values(self.__config.get("deviceTypeExpression"), data,
+            device_type_values = TicosUtility.get_values(self.__config.get("deviceTypeExpression"), data,
                                                       expression_instead_none=True)
 
             dict_result["deviceType"] = self.__config.get("deviceTypeExpression")
@@ -61,14 +61,14 @@ class XmppUplinkConverter(XmppConverter):
             for datatype in self._datatypes:
                 dict_result[self._datatypes[datatype]] = []
                 for datatype_config in self.__config.get(datatype, []):
-                    values = TBUtility.get_values(datatype_config["value"], data, "json",
+                    values = TicosUtility.get_values(datatype_config["value"], data, "json",
                                                   expression_instead_none=False)
-                    values_tags = TBUtility.get_values(datatype_config["value"], data, "json",
+                    values_tags = TicosUtility.get_values(datatype_config["value"], data, "json",
                                                        get_tag=True)
 
-                    keys = TBUtility.get_values(datatype_config["key"], data, "json",
+                    keys = TicosUtility.get_values(datatype_config["key"], data, "json",
                                                 expression_instead_none=False)
-                    keys_tags = TBUtility.get_values(datatype_config["key"], data, get_tag=True)
+                    keys_tags = TicosUtility.get_values(datatype_config["key"], data, get_tag=True)
 
                     full_key = datatype_config["key"]
                     for (key, key_tag) in zip(keys, keys_tags):

@@ -21,11 +21,11 @@ from bacpypes.object import get_datatype
 from bacpypes.pdu import Address, GlobalBroadcast
 from bacpypes.primitivedata import Null, ObjectIdentifier, Atomic, Integer, Real, Unsigned
 
-from ticos_gateway.connectors.bacnet.bacnet_utilities.ticos_gateway_bacnet_device import TBBACnetDevice
+from ticos_gateway.connectors.bacnet.bacnet_utilities.ticos_gateway_bacnet_device import TicosBACnetDevice
 from ticos_gateway.connectors.connector import log
 
 
-class TBBACnetApplication(BIPSimpleApplication):
+class TicosBACnetApplication(BIPSimpleApplication):
     def __init__(self, connector, configuration):
         try:
             self.__config = configuration
@@ -34,7 +34,7 @@ class TBBACnetApplication(BIPSimpleApplication):
             assert self.__config.get("general") is not None
             self.requests_in_progress = {}
             self.discovered_devices = {}
-            self.__device = TBBACnetDevice(self.__config["general"])
+            self.__device = TicosBACnetDevice(self.__config["general"])
             super().__init__(self.__device, self.__config["general"]["address"])
         except Exception as e:
             log.exception(e)

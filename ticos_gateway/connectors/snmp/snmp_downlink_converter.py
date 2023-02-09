@@ -20,7 +20,7 @@ class SNMPDownlinkConverter(Converter):
     def __init__(self, config):
         self.__config = config
 
-    @StatisticsService.CollectStatistics(start_stat_type='allReceivedBytesFromTB',
+    @StatisticsService.CollectStatistics(start_stat_type='allReceivedBytesFromTicos',
                                          end_stat_type='allBytesSentToDevices')
     def convert(self, config, data):
         return data["params"]

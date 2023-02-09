@@ -16,7 +16,7 @@ from simplejson import dumps
 from time import time
 
 from ticos_gateway.connectors.ocpp.ocpp_converter import OcppConverter, log
-from ticos_gateway.ticos_utility.ticos_utility import TBUtility
+from ticos_gateway.ticos_utility.ticos_utility import TicosUtility
 
 
 class OcppUplinkConverter(OcppConverter):
@@ -26,9 +26,9 @@ class OcppUplinkConverter(OcppConverter):
     def get_device_name(self, config):
         try:
             if self.__config.get("deviceNameExpression") is not None:
-                device_name_tags = TBUtility.get_values(self.__config.get("deviceNameExpression"), config,
+                device_name_tags = TicosUtility.get_values(self.__config.get("deviceNameExpression"), config,
                                                         get_tag=True)
-                device_name_values = TBUtility.get_values(self.__config.get("deviceNameExpression"), config,
+                device_name_values = TicosUtility.get_values(self.__config.get("deviceNameExpression"), config,
                                                           expression_instead_none=True)
 
                 device_name = self.__config.get("deviceNameExpression")
@@ -51,9 +51,9 @@ class OcppUplinkConverter(OcppConverter):
     def get_device_type(self, config):
         try:
             if self.__config.get("deviceTypeExpression") is not None:
-                device_type_tags = TBUtility.get_values(self.__config.get("deviceTypeExpression"), config,
+                device_type_tags = TicosUtility.get_values(self.__config.get("deviceTypeExpression"), config,
                                                         get_tag=True)
-                device_type_values = TBUtility.get_values(self.__config.get("deviceTypeExpression"), config,
+                device_type_values = TicosUtility.get_values(self.__config.get("deviceTypeExpression"), config,
                                                           expression_instead_none=True)
                 device_type = self.__config.get("deviceTypeExpression")
 
@@ -81,14 +81,14 @@ class OcppUplinkConverter(OcppConverter):
 
                 for datatype_config in self.__config.get(datatype, []):
                     if config['messageType'] in datatype_config['messageTypeFilter'].split(','):
-                        values = TBUtility.get_values(datatype_config["value"], data,
+                        values = TicosUtility.get_values(datatype_config["value"], data,
                                                       expression_instead_none=True)
-                        values_tags = TBUtility.get_values(datatype_config["value"], data,
+                        values_tags = TicosUtility.get_values(datatype_config["value"], data,
                                                            get_tag=True)
 
-                        keys = TBUtility.get_values(datatype_config["key"], data,
+                        keys = TicosUtility.get_values(datatype_config["key"], data,
                                                     expression_instead_none=True)
-                        keys_tags = TBUtility.get_values(datatype_config["key"], data, get_tag=True)
+                        keys_tags = TicosUtility.get_values(datatype_config["key"], data, get_tag=True)
 
                         full_key = datatype_config["key"]
                         for (key, key_tag) in zip(keys, keys_tags):

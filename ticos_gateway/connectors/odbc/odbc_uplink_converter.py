@@ -41,12 +41,12 @@ class OdbcUplinkConverter(OdbcConverter):
                     elif "value" in config_item:
                         converted_data[name] = eval(config_item["value"], globals(), data)
                     else:
-                        log.error("Failed to convert SQL data to TB format: no column/value configuration item")
+                        log.error("Failed to convert SQL data to Ticos format: no column/value configuration item")
                 else:
-                    log.error("Failed to convert SQL data to TB format: unexpected configuration type '%s'",
+                    log.error("Failed to convert SQL data to Ticos format: unexpected configuration type '%s'",
                               type(config_item))
             except Exception as e:
-                log.error("Failed to convert SQL data to TB format: %s", str(e))
+                log.error("Failed to convert SQL data to Ticos format: %s", str(e))
 
         if data.get('ts'):
             converted_data['ts'] = data.get('ts')

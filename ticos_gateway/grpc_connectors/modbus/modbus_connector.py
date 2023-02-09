@@ -29,7 +29,7 @@ from ticos_gateway.gateway.constants import DEVICE_NAME_PARAMETER, DEVICE_SECTIO
 from ticos_gateway.grpc_connectors.gw_grpc_connector import GwGrpcConnector, log
 from ticos_gateway.grpc_connectors.gw_grpc_msg_creator import GrpcMsgCreator
 from ticos_gateway.grpc_connectors.modbus.slave import Slave
-from ticos_gateway.ticos_utility.ticos_utility import TBUtility
+from ticos_gateway.ticos_utility.ticos_utility import TicosUtility
 from ticos_gateway.connectors.modbus.modbus_connector import FUNCTION_CODE_WRITE, FUNCTION_TYPE, \
     FUNCTION_CODE_PARAMETER, FRAMER_TYPE, SLAVE_TYPE, FUNCTION_CODE_READ, CONVERTED_DATA_SECTIONS
 
@@ -45,14 +45,14 @@ except ImportError:
 
 if installation_required:
     print("Modbus library not found - installing...")
-    TBUtility.install_package("pymodbus", ">=3.0.0")
-    TBUtility.install_package('pyserial')
-    TBUtility.install_package('pyserial-asyncio')
+    TicosUtility.install_package("pymodbus", ">=3.0.0")
+    TicosUtility.install_package('pyserial')
+    TicosUtility.install_package('pyserial-asyncio')
 
 try:
     from twisted.internet import reactor
 except ImportError:
-    TBUtility.install_package('twisted')
+    TicosUtility.install_package('twisted')
     from twisted.internet import reactor
 
 from twisted.internet import reactor

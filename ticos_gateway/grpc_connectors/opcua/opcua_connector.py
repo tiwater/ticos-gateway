@@ -26,21 +26,21 @@ from simplejson import dumps
 from ticos_gateway.connectors.opcua.opcua_connector import SubHandler
 from ticos_gateway.grpc_connectors.gw_grpc_msg_creator import GrpcMsgCreator
 from ticos_gateway.grpc_connectors.opcua.opcua_uplink_converter import GrpcOpcUaUplinkConverter
-from ticos_gateway.ticos_utility.ticos_loader import TBModuleLoader
-from ticos_gateway.ticos_utility.ticos_utility import TBUtility
+from ticos_gateway.ticos_utility.ticos_loader import TicosModuleLoader
+from ticos_gateway.ticos_utility.ticos_utility import TicosUtility
 from ticos_gateway.grpc_connectors.gw_grpc_connector import GwGrpcConnector, log
 
 try:
     from opcua import Client, Node, ua
 except ImportError:
     print("OPC-UA library not found")
-    TBUtility.install_package("opcua")
+    TicosUtility.install_package("opcua")
     from opcua import Client, Node, ua
 
 try:
     from opcua.crypto import uacrypto
 except ImportError:
-    TBUtility.install_package("cryptography")
+    TicosUtility.install_package("cryptography")
     from opcua.crypto import uacrypto
 
 
@@ -426,7 +426,7 @@ class GrpcOpcUaConnector(GwGrpcConnector):
         information_types = {"attributes": "attributes", "timeseries": "telemetry"}
         for information_type in information_types:
             for information in device_info["configuration"][information_type]:
-                config_path = TBUtility.get_value(information["path"], get_tag=True)
+                config_path = TicosUtility.get_value(information["path"], get_tag=True)
                 information_path = self._check_path(config_path, device_info["deviceNode"])
                 information["path"] = '${%s}' % information_path
                 information_nodes = []
@@ -458,7 +458,7 @@ class GrpcOpcUaConnector(GwGrpcConnector):
                             if device_info["configuration"].get('converter') is None:
                                 converter = GrpcOpcUaUplinkConverter(configuration)
                             else:
-                                converter = TBModuleLoader.import_module(self._connector_type, configuration)
+                                converter = TicosModuleLoader.import_module(self._connector_type, configuration)
                             device_info["uplink_converter"] = converter
                         else:
                             converter = device_info["uplink_converter"]
@@ -534,12 +534,12 @@ class GrpcOpcUaConnector(GwGrpcConnector):
     def __search_general_info(self, device):
         result = []
         match_devices = []
-        self.__search_node(self.__opcua_nodes["root"], TBUtility.get_value(device["deviceNodePattern"], get_tag=True), result=match_devices)
+        self.__search_node(self.__opcua_nodes["root"], TicosUtility.get_value(device["deviceNodePattern"], get_tag=True), result=match_devices)
         for device_node in match_devices:
             if device_node is not None:
                 result_device_dict = {"deviceName": None, "deviceType": None, "deviceNode": device_node, "configuration": deepcopy(device)}
                 name_pattern_config = device["deviceNamePattern"]
-                name_expression = TBUtility.get_value(name_pattern_config, get_tag=True)
+                name_expression = TicosUtility.get_value(name_pattern_config, get_tag=True)
                 if "${" in name_pattern_config and "}" in name_pattern_config:
                     log.debug("Looking for device name")
                     device_name_from_node = ""
@@ -569,7 +569,7 @@ class GrpcOpcUaConnector(GwGrpcConnector):
                 result_device_dict["deviceName"] = full_device_name
                 log.debug("Device name: %s", full_device_name)
                 if device.get("deviceTypePattern"):
-                    device_type_expression = TBUtility.get_value(device["deviceTypePattern"],
+                    device_type_expression = TicosUtility.get_value(device["deviceTypePattern"],
                                                                  get_tag=True)
                     if "${" in device_type_expression and "}" in device_type_expression:
                         type_path = self._check_path(device_type_expression, device_node)
@@ -592,7 +592,7 @@ class GrpcOpcUaConnector(GwGrpcConnector):
                     result_device_dict["deviceType"] = "default"
                 result.append(result_device_dict)
             else:
-                log.error("Device node not found with expression: %s", TBUtility.get_value(device["deviceNodePattern"], get_tag=True))
+                log.error("Device node not found with expression: %s", TicosUtility.get_value(device["deviceNodePattern"], get_tag=True))
         return result
 
     @cached(cache=TTLCache(maxsize=1000, ttl=10 * 60))

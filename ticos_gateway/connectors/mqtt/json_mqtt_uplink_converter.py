@@ -18,7 +18,7 @@ from simplejson import dumps
 
 from ticos_gateway.gateway.constants import SEND_ON_CHANGE_PARAMETER
 from ticos_gateway.connectors.mqtt.mqtt_uplink_converter import MqttUplinkConverter, log
-from ticos_gateway.ticos_utility.ticos_utility import TBUtility
+from ticos_gateway.ticos_utility.ticos_utility import TicosUtility
 from ticos_gateway.gateway.statistics_service import StatisticsService
 
 
@@ -65,14 +65,14 @@ class JsonMqttUplinkConverter(MqttUplinkConverter):
                             dict_result[datatypes[datatype]].append(
                                 self.create_timeseries_record(item, data[item], timestamp))
                     else:
-                        values = TBUtility.get_values(datatype_config["value"], data, datatype_config["type"],
+                        values = TicosUtility.get_values(datatype_config["value"], data, datatype_config["type"],
                                                       expression_instead_none=False)
-                        values_tags = TBUtility.get_values(datatype_config["value"], data, datatype_config["type"],
+                        values_tags = TicosUtility.get_values(datatype_config["value"], data, datatype_config["type"],
                                                            get_tag=True)
 
-                        keys = TBUtility.get_values(datatype_config["key"], data, datatype_config["type"],
+                        keys = TicosUtility.get_values(datatype_config["key"], data, datatype_config["type"],
                                                     expression_instead_none=False)
-                        keys_tags = TBUtility.get_values(datatype_config["key"], data, get_tag=True)
+                        keys_tags = TicosUtility.get_values(datatype_config["key"], data, get_tag=True)
 
                         full_key = datatype_config["key"]
                         for (key, key_tag) in zip(keys, keys_tags):
@@ -118,8 +118,8 @@ class JsonMqttUplinkConverter(MqttUplinkConverter):
         try:
             if config.get(json_expression_config_name) is not None:
                 expression = config.get(json_expression_config_name)
-                result_tags = TBUtility.get_values(expression, data, get_tag=True)
-                result_values = TBUtility.get_values(expression, data, expression_instead_none=True)
+                result_tags = TicosUtility.get_values(expression, data, get_tag=True)
+                result_values = TicosUtility.get_values(expression, data, expression_instead_none=True)
 
                 result = expression
                 for (result_tag, result_value) in zip(result_tags, result_values):

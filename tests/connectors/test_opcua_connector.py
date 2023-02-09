@@ -17,7 +17,7 @@ from threading import Thread
 from time import sleep, time
 from math import sin
 
-from ticos_gateway.ticos_utility.ticos_utility import TBUtility
+from ticos_gateway.ticos_utility.ticos_utility import TicosUtility
 from tests.connectors.connector_tests_base import ConnectorTestBase, log
 
 try:
@@ -25,7 +25,7 @@ try:
     from opcua import ua, uamethod, Server
 except ImportError:
     log.error("OpcUa library - not found. Installing...")
-    TBUtility.install_package("opcua")
+    TicosUtility.install_package("opcua")
     from opcua.ua import NodeId, NodeIdType
     from opcua import ua, uamethod, Server
 

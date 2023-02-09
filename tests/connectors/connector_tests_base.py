@@ -22,7 +22,7 @@ import ticos_gateway
 from simplejson import load
 
 from ticos_gateway.gateway.ticos_gateway_service import DEFAULT_CONNECTORS
-from ticos_gateway.ticos_utility.ticos_utility import TBUtility
+from ticos_gateway.ticos_utility.ticos_utility import TicosUtility
 
 logging.basicConfig(level=logging.ERROR,
                     format='%(asctime)s - %(levelname)s - %(module)s - %(lineno)d - %(message)s',
@@ -35,7 +35,7 @@ class ConnectorTestBase(unittest.TestCase):
                             "data" + path.sep)
 
     def setUp(self):
-        self.gateway = Mock(spec=ticos_gateway.TBGatewayService)
+        self.gateway = Mock(spec=ticos_gateway.TicosGatewayService)
         self.connector = None
         self.config = None
 
@@ -57,7 +57,7 @@ class ConnectorTestBase(unittest.TestCase):
         self._connector_type = connector_type
         self.config = self._load_data_file(config_filename, connector_type)
         self.assertTrue(self.config is not None)
-        connector = TBUtility.check_and_import(connector_type, DEFAULT_CONNECTORS[connector_type])
+        connector = TicosUtility.check_and_import(connector_type, DEFAULT_CONNECTORS[connector_type])
         self.assertTrue(connector is not None)
         self.connector = connector(self.gateway, self.config, connector_type)
         sleep(1)

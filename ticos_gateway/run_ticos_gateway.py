@@ -14,7 +14,7 @@
 import sys
 from os import curdir, listdir, mkdir, path
 
-from ticos_gateway.gateway.ticos_gateway_service import TBGatewayService
+from ticos_gateway.gateway.ticos_gateway_service import TicosGatewayService
 from ticos_gateway.gateway.hot_reloader import HotReloader
 
 
@@ -28,13 +28,13 @@ def main():
         hot_reload = False
 
     if hot_reload:
-        HotReloader(TBGatewayService)
+        HotReloader(TicosGatewayService)
     else:
-        TBGatewayService(path.dirname(path.abspath(__file__)) + '/config/ticos_gateway.yaml'.replace('/', path.sep))
+        TicosGatewayService(path.dirname(path.abspath(__file__)) + '/config/ticos_gateway.yaml'.replace('/', path.sep))
 
 
 def daemon():
-    TBGatewayService("/etc/ticos-gateway/config/ticos_gateway.yaml".replace('/', path.sep))
+    TicosGatewayService("/etc/ticos-gateway/config/ticos_gateway.yaml".replace('/', path.sep))
 
 
 if __name__ == '__main__':

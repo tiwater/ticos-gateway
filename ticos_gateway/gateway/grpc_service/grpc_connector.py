@@ -15,12 +15,12 @@
 
 from ticos_gateway.connectors.connector import Connector
 from ticos_gateway.gateway.constant_enums import DownlinkMessageType
-from ticos_gateway.gateway.grpc_service.ticos_grpc_manager import TBGRPCServerManager
+from ticos_gateway.gateway.grpc_service.ticos_grpc_manager import TicosGRPCServerManager
 from ticos_gateway.gateway.grpc_service.grpc_downlink_converter import GrpcDownlinkConverter
 
 
 class GrpcConnector(Connector):
-    def __init__(self, gateway, config, ticos_grpc_server_manager: TBGRPCServerManager, session_id):
+    def __init__(self, gateway, config, ticos_grpc_server_manager: TicosGRPCServerManager, session_id):
         self.name = None
         self.__server_manager = ticos_grpc_server_manager
         self.__session_id = session_id

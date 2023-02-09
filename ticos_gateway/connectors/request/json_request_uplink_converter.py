@@ -17,7 +17,7 @@ from time import time
 from simplejson import dumps, loads
 
 from ticos_gateway.connectors.request.request_converter import RequestConverter, log
-from ticos_gateway.ticos_utility.ticos_utility import TBUtility
+from ticos_gateway.ticos_utility.ticos_utility import TicosUtility
 from ticos_gateway.gateway.statistics_service import StatisticsService
 
 
@@ -37,9 +37,9 @@ class JsonRequestUplinkConverter(RequestConverter):
 
         try:
             if self.__config['converter'].get("deviceNameJsonExpression") is not None:
-                device_name_tags = TBUtility.get_values(self.__config['converter'].get("deviceNameJsonExpression"),
+                device_name_tags = TicosUtility.get_values(self.__config['converter'].get("deviceNameJsonExpression"),
                                                         data, get_tag=True)
-                device_name_values = TBUtility.get_values(self.__config['converter'].get("deviceNameJsonExpression"),
+                device_name_values = TicosUtility.get_values(self.__config['converter'].get("deviceNameJsonExpression"),
                                                           data, get_tag=False)
                 dict_result["deviceName"] = self.__config['converter'].get("deviceNameJsonExpression")
                 for (device_name_tag, device_name_value) in zip(device_name_tags, device_name_values):
@@ -52,10 +52,10 @@ class JsonRequestUplinkConverter(RequestConverter):
                 log.error("The expression for looking \"deviceName\" not found in config %s",
                           dumps(self.__config['converter']))
             if self.__config['converter'].get("deviceTypeJsonExpression") is not None:
-                device_type_tags = TBUtility.get_values(self.__config['converter'].get("deviceTypeJsonExpression"),
+                device_type_tags = TicosUtility.get_values(self.__config['converter'].get("deviceTypeJsonExpression"),
                                                         data,
                                                         get_tag=True)
-                device_type_values = TBUtility.get_values(self.__config['converter'].get("deviceTypeJsonExpression"),
+                device_type_values = TicosUtility.get_values(self.__config['converter'].get("deviceTypeJsonExpression"),
                                                           data,
                                                           expression_instead_none=True)
                 dict_result["deviceType"] = self.__config['converter'].get("deviceTypeJsonExpression")
@@ -75,15 +75,15 @@ class JsonRequestUplinkConverter(RequestConverter):
             for datatype in self.__datatypes:
                 dict_result[self.__datatypes[datatype]] = []
                 for datatype_object_config in self.__config["converter"].get(datatype, []):
-                    values = TBUtility.get_values(datatype_object_config["value"], data, datatype_object_config["type"],
+                    values = TicosUtility.get_values(datatype_object_config["value"], data, datatype_object_config["type"],
                                                   expression_instead_none=True)
-                    values_tags = TBUtility.get_values(datatype_object_config["value"], data,
+                    values_tags = TicosUtility.get_values(datatype_object_config["value"], data,
                                                        datatype_object_config["type"],
                                                        get_tag=True)
 
-                    keys = TBUtility.get_values(datatype_object_config["key"], data, datatype_object_config["type"],
+                    keys = TicosUtility.get_values(datatype_object_config["key"], data, datatype_object_config["type"],
                                                 expression_instead_none=True)
-                    keys_tags = TBUtility.get_values(datatype_object_config["key"], data, get_tag=True)
+                    keys_tags = TicosUtility.get_values(datatype_object_config["key"], data, get_tag=True)
 
                     full_key = datatype_object_config["key"]
                     for (key, key_tag) in zip(keys, keys_tags):

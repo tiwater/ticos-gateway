@@ -24,7 +24,7 @@ from requests import ConnectionError, post
 from simplejson import loads
 
 from ticos_gateway.gateway.constants import VERSION
-from ticos_gateway.ticos_utility.ticos_utility import TBUtility
+from ticos_gateway.ticos_utility.ticos_utility import TicosUtility
 
 
 log = getLogger("service")
@@ -32,7 +32,7 @@ log = getLogger("service")
 UPDATE_SERVICE_BASE_URL = "https://updates.ticos.io"
 
 
-class TBUpdater(Thread):
+class TicosUpdater(Thread):
     def __init__(self):
         super().__init__()
 
@@ -112,11 +112,11 @@ class TBUpdater(Thread):
 
     def update(self):
         if self.__version["latest_version"] != self.__version["current_version"]:
-            result = TBUtility.install_package("ticos-gateway", self.__version["latest_version"])
+            result = TicosUtility.install_package("ticos-gateway", self.__version["latest_version"])
         else:
             result = "Congratulations! You have the latest version."
         return result
 
 
 if __name__ == '__main__':
-    updater = TBUpdater()
+    updater = TicosUpdater()

@@ -38,21 +38,21 @@ from ticos_gateway.gateway.device_filter import DeviceFilter
 from ticos_gateway.gateway.duplicate_detector import DuplicateDetector
 from ticos_gateway.gateway.shell.proxy import AutoProxy
 from ticos_gateway.gateway.statistics_service import StatisticsService
-from ticos_gateway.gateway.ticos_client import TBClient
+from ticos_gateway.gateway.ticos_client import TicosClient
 from ticos_gateway.storage.file.file_event_storage import FileEventStorage
 from ticos_gateway.storage.memory.memory_event_storage import MemoryEventStorage
 from ticos_gateway.storage.sqlite.sqlite_event_storage import SQLiteEventStorage
 from ticos_gateway.ticos_utility.ticos_gateway_remote_configurator import RemoteConfigurator
-from ticos_gateway.ticos_utility.ticos_loader import TBModuleLoader
-from ticos_gateway.ticos_utility.ticos_logger import TBLoggerHandler
+from ticos_gateway.ticos_utility.ticos_loader import TicosModuleLoader
+from ticos_gateway.ticos_utility.ticos_logger import TicosLoggerHandler
 from ticos_gateway.ticos_utility.ticos_remote_shell import RemoteShell
-from ticos_gateway.ticos_utility.ticos_updater import TBUpdater
-from ticos_gateway.ticos_utility.ticos_utility import TBUtility
+from ticos_gateway.ticos_utility.ticos_updater import TicosUpdater
+from ticos_gateway.ticos_utility.ticos_utility import TicosUtility
 
 GRPC_LOADED = False
 try:
     from ticos_gateway.gateway.grpc_service.grpc_connector import GrpcConnector
-    from ticos_gateway.gateway.grpc_service.ticos_grpc_manager import TBGRPCServerManager
+    from ticos_gateway.gateway.grpc_service.ticos_grpc_manager import TicosGRPCServerManager
 
     GRPC_LOADED = True
 except ImportError:
@@ -135,7 +135,7 @@ class GatewayManager(multiprocessing.managers.BaseManager):
         self.gateway = gateway
 
 
-class TBGatewayService:
+class TicosGatewayService:
     EXPOSED_GETTERS = [
         'ping',
         'get_status',
@@ -176,7 +176,7 @@ class TBGatewayService:
         global log
         log = logging.getLogger('service')
         log.info("Gateway starting...")
-        self.__updater = TBUpdater()
+        self.__updater = TicosUpdater()
         self.__updates_check_period_ms = 300000
         self.__updates_check_time = 0
         self.version = self.__updater.get_version()
@@ -190,7 +190,7 @@ class TBGatewayService:
         self.name = ''.join(choice(ascii_lowercase) for _ in range(64))
         self.__rpc_register_queue = SimpleQueue()
         self.__rpc_requests_in_progress = {}
-        self.ticos_client = TBClient(self.__config["ticos"], self._config_dir)
+        self.ticos_client = TicosClient(self.__config["ticos"], self._config_dir)
         try:
             self.ticos_client.disconnect()
         except Exception as e:
@@ -201,12 +201,12 @@ class TBGatewayService:
         if logging_error is not None:
             self.ticos_client.client.send_telemetry({"ts": time() * 1000, "values": {
                 "LOGS": "Logging loading exception, logs.conf is wrong: %s" % (str(logging_error),)}})
-            TBLoggerHandler.set_default_handler()
+            TicosLoggerHandler.set_default_handler()
         self.counter = 0
         self.__rpc_reply_sent = False
         global main_handler
         self.main_handler = main_handler
-        self.remote_handler = TBLoggerHandler(self)
+        self.remote_handler = TicosLoggerHandler(self)
         self.main_handler.setTarget(self.remote_handler)
         self._default_connectors = DEFAULT_CONNECTORS
         self.__converted_data_queue = SimpleQueue()
@@ -253,7 +253,7 @@ class TBGatewayService:
         self.__grpc_connectors = {}
         if GRPC_LOADED and self.__grpc_config is not None and self.__grpc_config.get("enabled"):
             self.__process_async_actions_thread.start()
-            self.__grpc_manager = TBGRPCServerManager(self, self.__grpc_config)
+            self.__grpc_manager = TicosGRPCServerManager(self, self.__grpc_config)
             self.__grpc_manager.set_gateway_read_callbacks(self.__register_connector, self.__unregister_connector)
         self._load_connectors()
         self._connect_with_connectors()
@@ -478,7 +478,7 @@ class TBGatewayService:
     def __process_deleted_gateway_devices(self, deleted_device_name: str):
         log.info("Received deleted gateway device notification: %s", deleted_device_name)
         if deleted_device_name in list(self.__renamed_devices.values()):
-            first_device_name = TBUtility.get_dict_key_by_value(self.__renamed_devices, deleted_device_name)
+            first_device_name = TicosUtility.get_dict_key_by_value(self.__renamed_devices, deleted_device_name)
             del self.__renamed_devices[first_device_name]
             deleted_device_name = first_device_name
             log.debug("Current renamed_devices dict: %s", self.__renamed_devices)
@@ -497,7 +497,7 @@ class TBGatewayService:
             log.info("Received renamed gateway device notification: %s", renamed_device)
             old_device_name, new_device_name = renamed_device.popitem()
             if old_device_name in list(self.__renamed_devices.values()):
-                device_name_key = TBUtility.get_dict_key_by_value(self.__renamed_devices, old_device_name)
+                device_name_key = TicosUtility.get_dict_key_by_value(self.__renamed_devices, old_device_name)
             else:
                 device_name_key = new_device_name
             self.__renamed_devices[device_name_key] = new_device_name
@@ -594,13 +594,13 @@ class TBGatewayService:
                         connector_class = None
                         if connector.get('useGRPC', True):
                             module_name = f'Grpc{self._default_connectors.get(connector["type"], connector.get("class"))}'
-                            connector_class = TBModuleLoader.import_module(connector['type'], module_name)
+                            connector_class = TicosModuleLoader.import_module(connector['type'], module_name)
 
                         if self.__grpc_manager and self.__grpc_manager.is_alive() and connector_class:
                             connector_persistent_key = self._generate_persistent_key(connector,
                                                                                      connectors_persistent_keys)
                         else:
-                            connector_class = TBModuleLoader.import_module(connector['type'],
+                            connector_class = TicosModuleLoader.import_module(connector['type'],
                                                                            self._default_connectors.get(
                                                                                connector['type'],
                                                                                connector.get('class')))
@@ -740,7 +740,7 @@ class TBGatewayService:
                                 data['telemetry'] = []
                             if 'attributes' not in data:
                                 data['attributes'] = []
-                            if not TBUtility.validate_converted_data(data):
+                            if not TicosUtility.validate_converted_data(data):
                                 log.error("Data from %s connector is invalid.", connector_name)
                                 continue
                             if data.get('deviceType') is None:
@@ -931,7 +931,7 @@ class TBGatewayService:
                                         if self.ticos_client.is_connected() and (
                                                 self.__remote_configurator is None or not self.__remote_configurator.in_process):
                                             if self.ticos_client.client.quality_of_service == 1:
-                                                success = event.get() == event.TB_ERR_SUCCESS
+                                                success = event.get() == event.Ticos_ERR_SUCCESS
                                             else:
                                                 success = True
                                         else:
@@ -954,7 +954,7 @@ class TBGatewayService:
                 log.exception(e)
                 sleep(1)
 
-    @StatisticsService.CollectAllSentTBBytesStatistics(start_stat_type='allBytesSentToTB')
+    @StatisticsService.CollectAllSentTicosBytesStatistics(start_stat_type='allBytesSentToTicos')
     def __send_data(self, devices_data_in_event_pack):
         try:
             for device in devices_data_in_event_pack:
@@ -1097,7 +1097,7 @@ class TBGatewayService:
         log.info("Outgoing RPC. Device: %s, ID: %d", device, req_id)
         self.send_rpc_reply(device, req_id, content)
 
-    @StatisticsService.CollectRPCReplyStatistics(start_stat_type='allBytesSentToTB')
+    @StatisticsService.CollectRPCReplyStatistics(start_stat_type='allBytesSentToTicos')
     def send_rpc_reply(self, device=None, req_id=None, content=None, success_sent=None, wait_for_publish=None,
                        quality_of_service=0):
         self.__rpc_processing_queue.put((device, req_id, content, success_sent, wait_for_publish, quality_of_service))
@@ -1357,5 +1357,5 @@ class TBGatewayService:
 
 
 if __name__ == '__main__':
-    TBGatewayService(
+    TicosGatewayService(
         path.dirname(path.dirname(path.abspath(__file__))) + '/config/ticos_gateway.yaml'.replace('/', path.sep))

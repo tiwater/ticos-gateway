@@ -51,7 +51,7 @@ class BytesCanUplinkConverter(CanConverter):
                     for hex_byte in can_data[config["start"]:config["start"] + data_length]:
                         value += "%02x" % hex_byte
                 else:
-                    log.error("Failed to convert CAN data to TB %s '%s': unknown data type '%s'",
+                    log.error("Failed to convert CAN data to Ticos %s '%s': unknown data type '%s'",
                               "time series key" if config["is_ts"] else "attribute", ticos_key, config["type"])
                     continue
 
@@ -62,7 +62,7 @@ class BytesCanUplinkConverter(CanConverter):
                 else:
                     result[ticos_item][ticos_key] = value
             except Exception as e:
-                log.error("Failed to convert CAN data to TB %s '%s': %s",
+                log.error("Failed to convert CAN data to Ticos %s '%s': %s",
                           "time series key" if config["is_ts"] else "attribute", ticos_key, str(e))
                 continue
         return result

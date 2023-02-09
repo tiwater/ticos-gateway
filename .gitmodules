@@ -1,3 +1,0 @@
-[submodule "ticos_mqtt_client"]
-	path = ticos_mqtt_client
-	url = https://github.com/thingsboard/thingsboard-python-client-sdk.git

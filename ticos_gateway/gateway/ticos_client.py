@@ -12,6 +12,7 @@
 #     See the License for the specific language governing permissions and
 #     limitations under the License.
 
+import sys
 import logging
 import threading
 from time import sleep, time
@@ -19,6 +20,7 @@ from ssl import CERT_REQUIRED, PROTOCOL_TLSv1_2
 from ticos_gateway.ticos_utility.ticos_utility import TicosUtility
 
 try:
+    sys.path.append('./ticos_mqtt_client')
     from ticos_gateway_mqtt import TicosGatewayMqttClient
 except ImportError:
     print("ticos-mqtt-client library not found - installing...")

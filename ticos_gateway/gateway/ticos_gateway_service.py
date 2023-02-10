@@ -931,7 +931,7 @@ class TicosGatewayService:
                                         if self.ticos_client.is_connected() and (
                                                 self.__remote_configurator is None or not self.__remote_configurator.in_process):
                                             if self.ticos_client.client.quality_of_service == 1:
-                                                success = event.get() == event.Ticos_ERR_SUCCESS
+                                                success = event.get() == event.TICOS_ERR_SUCCESS
                                             else:
                                                 success = True
                                         else:

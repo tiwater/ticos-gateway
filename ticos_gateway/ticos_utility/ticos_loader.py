@@ -43,7 +43,7 @@ class TicosModuleLoader:
 
     @staticmethod
     def import_module(extension_type, module_name):
-        if len(TicosUoduleLoader.PATHS) == 0:
+        if len(TicosModuleLoader.PATHS) == 0:
             TicosModuleLoader.find_paths()
         buffered_module_name = extension_type + module_name
         if TicosModuleLoader.LOADED_CONNECTORS.get(buffered_module_name) is not None:

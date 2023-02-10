@@ -12,7 +12,7 @@ if [ ! -f ${firstlaunch} ]; then\n\
 fi\n\
 echo "nameserver 8.8.8.8" >> /etc/resolv.conf\n\
 \n\
-python ./ticos_gateway/ticos_gateway.py\n\
+python ./ticos_gateway/run_ticos_gateway.py\n\
 '\
 >> start-gateway.sh && chmod +x start-gateway.sh
 ENV PATH="/root/.local/bin:$PATH"

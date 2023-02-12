@@ -1,5 +1,5 @@
 #!/bin/sh
-#      Copyright 2022. ThingsBoard
+#      Copyright 2022. Ticos
 #
 #      Licensed under the Apache License, Version 2.0 (the "License");
 #      you may not use this file except in compliance with the License.
@@ -16,6 +16,6 @@
 set -e
 
 echo "Installing directory for configs..."
-sudo mkdir /etc/thingsboard-gateway || echo
-sudo adduser --system --gecos "ThingsBoard-Gateway Service" --disabled-password --group --home /var/lib/thingsboard_gateway thingsboard_gateway || echo "User exists"
-sudo mkdir /var/lib/thingsboard_gateway/extensions || echo
+sudo mkdir /etc/ticos-gateway || echo
+sudo adduser --system --gecos "Ticos-Gateway Service" --disabled-password --group --home /var/lib/ticos_gateway ticos_gateway || echo "User exists"
+sudo mkdir /var/lib/ticos_gateway/extensions || echo

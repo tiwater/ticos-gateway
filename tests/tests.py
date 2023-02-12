@@ -1,4 +1,4 @@
-#     Copyright 2019. ThingsBoard
+#     Copyright 2019. Ticos
 #
 #     Licensed under the Apache License, Version 2.0 (the "License");
 #     you may not use this file except in compliance with the License.
@@ -18,12 +18,12 @@ from os import remove, listdir, removedirs
 from time import sleep
 from random import randint
 
-from thingsboard_gateway.connectors.mqtt.json_mqtt_uplink_converter import JsonMqttUplinkConverter
-from thingsboard_gateway.connectors.opcua.opcua_uplink_converter import OpcUaUplinkConverter
-from thingsboard_gateway.connectors.ble.bytes_ble_uplink_converter import BytesBLEUplinkConverter
-from thingsboard_gateway.connectors.request.json_request_uplink_converter import JsonRequestUplinkConverter
-from thingsboard_gateway.storage.memory.memory_event_storage import MemoryEventStorage
-from thingsboard_gateway.storage.file.file_event_storage import FileEventStorage
+from ticos_gateway.connectors.mqtt.json_mqtt_uplink_converter import JsonMqttUplinkConverter
+from ticos_gateway.connectors.opcua.opcua_uplink_converter import OpcUaUplinkConverter
+from ticos_gateway.connectors.ble.bytes_ble_uplink_converter import BytesBLEUplinkConverter
+from ticos_gateway.connectors.request.json_request_uplink_converter import JsonRequestUplinkConverter
+from ticos_gateway.storage.memory.memory_event_storage import MemoryEventStorage
+from ticos_gateway.storage.file.file_event_storage import FileEventStorage
 
 logging.basicConfig(level=logging.ERROR,
                     format='%(asctime)s - %(levelname)s - %(module)s - %(lineno)d - %(message)s',

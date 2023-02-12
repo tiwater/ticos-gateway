@@ -1,0 +1,19 @@
+[Unit]
+Description=Ticos Gateway
+After=multi-user.target
+ConditionPathExists=/etc/ticos-gateway/config/ticos_gateway.yaml
+
+[Service]
+Type=simple
+User=ticos_gateway
+Group=ticos_gateway
+
+WorkingDirectory=/var/lib/ticos_gateway
+ExecStart=/usr/bin/python3 -c "from ticos_gateway.ticos_gateway import daemon; daemon()"
+ExecStop=/bin/kill -INT $MAINPID
+ExecReload=/bin/kill -TERM $MAINPID
+
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

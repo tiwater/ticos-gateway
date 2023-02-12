@@ -1,4 +1,4 @@
-#     Copyright 2020. ThingsBoard
+#     Copyright 2020. Ticos
 #
 #     Licensed under the Apache License, Version 2.0 (the "License"];
 #     you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@ import unittest
 from random import randint, uniform, choice
 from string import ascii_lowercase
 
-from thingsboard_gateway.connectors.odbc.odbc_uplink_converter import OdbcUplinkConverter
+from ticos_gateway.connectors.odbc.odbc_uplink_converter import OdbcUplinkConverter
 
 
 class OdbcUplinkConverterTests(unittest.TestCase):

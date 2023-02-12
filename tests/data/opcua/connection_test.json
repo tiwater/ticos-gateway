@@ -39,7 +39,7 @@
         ],
         "attributes_updates": [
           {
-            "attributeOnThingsBoard": "deviceName",
+            "attributeOnTicos": "deviceName",
             "attributeOnDevice": "Root\\.Objects\\.Device1\\.serialNumber"
           }
         ]

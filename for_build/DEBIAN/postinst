@@ -1,5 +1,5 @@
 #!/bin/sh
-#      Copyright 2022. ThingsBoard
+#      Copyright 2022. Ticos
 #
 #      Licensed under the Apache License, Version 2.0 (the "License");
 #      you may not use this file except in compliance with the License.
@@ -17,10 +17,10 @@ set -e
 
 # Automatically added by dh_python3:
 if which py3compile >/dev/null 2>&1; then
-	py3compile -p python3-thingsboard-gateway 
+	py3compile -p python3-ticos-gateway 
 fi
 if which pypy3compile >/dev/null 2>&1; then
-	pypy3compile -p python3-thingsboard-gateway  || true
+	pypy3compile -p python3-ticos-gateway  || true
 fi
 
 # End automatically added section
@@ -32,17 +32,17 @@ sudo pip3 install --upgrade jsonschema==3.1.1
 sudo pip3 install --upgrade pyrsistent --progress-bar off -qqq || echo "OK"
 sudo pip3 install --upgrade importlib --progress-bar off -qqq || echo "OK"
 sudo pip3 install --upgrade importlib-metadata --progress-bar off -qqq || echo "OK"
-sudo cp -a -r /etc/thingsboard-gateway/extensions /var/lib/thingsboard_gateway/
-sudo rm -r /etc/thingsboard-gateway/extensions
+sudo cp -a -r /etc/ticos-gateway/extensions /var/lib/ticos_gateway/
+sudo rm -r /etc/ticos-gateway/extensions
 sudo usermod -a -G dialout $CURRENT_USER
-sudo usermod -a -G thingsboard_gateway $CURRENT_USER
-sudo chown thingsboard_gateway:thingsboard_gateway /var/log/thingsboard-gateway/ -R
-sudo chown thingsboard_gateway:thingsboard_gateway /var/lib/thingsboard_gateway/ -R
-sudo chown thingsboard_gateway:thingsboard_gateway /etc/thingsboard-gateway/ -R
-sudo sed -i 's/\.\/logs/\/var\/log\/thingsboard-gateway/g' /etc/thingsboard-gateway/config/logs.conf >> /etc/thingsboard-gateway/config/logs.conf
+sudo usermod -a -G ticos_gateway $CURRENT_USER
+sudo chown ticos_gateway:ticos_gateway /var/log/ticos-gateway/ -R
+sudo chown ticos_gateway:ticos_gateway /var/lib/ticos_gateway/ -R
+sudo chown ticos_gateway:ticos_gateway /etc/ticos-gateway/ -R
+sudo sed -i 's/\.\/logs/\/var\/log\/ticos-gateway/g' /etc/ticos-gateway/config/logs.conf >> /etc/ticos-gateway/config/logs.conf
 echo "Installation completed"
 echo "Enabling daemon..."
-sudo pidof systemd && sudo systemctl enable thingsboard-gateway || echo "Systemctl not found"
+sudo pidof systemd && sudo systemctl enable ticos-gateway || echo "Systemctl not found"
 #echo "Daemon starting..."
-sudo pidof systemd && sudo systemctl start thingsboard-gateway || echo
-echo -e "\e[96mThingsboard Gateway \e[92mhas been installed. Have a nice day \e[93m\e[5m:)\e[25m\e[39m"
+sudo pidof systemd && sudo systemctl start ticos-gateway || echo
+echo -e "\e[96mTicos Gateway \e[92mhas been installed. Have a nice day \e[93m\e[5m:)\e[25m\e[39m"

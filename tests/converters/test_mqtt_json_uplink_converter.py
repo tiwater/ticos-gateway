@@ -1,4 +1,4 @@
-#     Copyright 2022. ThingsBoard
+#     Copyright 2022. Ticos
 #
 #     Licensed under the Apache License, Version 2.0 (the "License"];
 #     you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
 import unittest
 from random import randint
 
-from thingsboard_gateway.gateway.constants import *
-from thingsboard_gateway.connectors.mqtt.json_mqtt_uplink_converter import JsonMqttUplinkConverter
+from ticos_gateway.gateway.constants import *
+from ticos_gateway.connectors.mqtt.json_mqtt_uplink_converter import JsonMqttUplinkConverter
 
 
 class JsonMqttUplinkConverterTests(unittest.TestCase):

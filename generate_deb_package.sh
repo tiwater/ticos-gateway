@@ -1,4 +1,4 @@
-#     Copyright 2020. ThingsBoard
+#     Copyright 2020. Ticos
 #
 #     Licensed under the Apache License, Version 2.0 (the "License");
 #     you may not use this file except in compliance with the License.
@@ -14,13 +14,13 @@
 
 CURRENT_VERSION=$( grep -Po 'VERSION[ ,]=[ ,]\"\K(([0-9])+(\.){0,1})+' setup.py )
 if [ "$1" = "clean" ] || [ "$1" = "only_clean" ] ; then
-  sudo rm -rf /var/log/thingsboard-gateway/
+  sudo rm -rf /var/log/ticos-gateway/
   sudo rm -rf deb_dist/
   sudo rm -rf dist/
-  sudo rm -rf thingsboard-gateway.egg-info/
-  sudo rm -rf /etc/thingsboard-gateway/
-  sudo rm -rf thingsboard-gateway-$CURRENT_VERSION.tar.gz
-  sudo apt remove python3-thingsboard-gateway -y
+  sudo rm -rf ticos-gateway.egg-info/
+  sudo rm -rf /etc/ticos-gateway/
+  sudo rm -rf ticos-gateway-$CURRENT_VERSION.tar.gz
+  sudo apt remove python3-ticos-gateway -y
 fi
 
 if [ "$1" != "only_clean" ] ; then
@@ -30,26 +30,26 @@ if [ "$1" != "only_clean" ] ; then
   echo "Creating sources for DEB package..."
   python3 setup.py --command-packages=stdeb.command bdist_deb
   echo "Adding the files, scripts and permissions in the package"
-  sudo cp -r thingsboard_gateway/extensions for_build/etc/thingsboard-gateway/
-  sudo cp -r thingsboard_gateway/config for_build/etc/thingsboard-gateway/
-  sudo cp -r for_build/etc deb_dist/thingsboard-gateway-$CURRENT_VERSION/debian/python3-thingsboard-gateway
-  sudo cp -r for_build/var deb_dist/thingsboard-gateway-$CURRENT_VERSION/debian/python3-thingsboard-gateway
-  sudo cp -r -a for_build/DEBIAN deb_dist/thingsboard-gateway-$CURRENT_VERSION/debian/python3-thingsboard-gateway
-  sudo chown root:root deb_dist/thingsboard-gateway-$CURRENT_VERSION/debian/python3-thingsboard-gateway/ -R
-  sudo chown root:root deb_dist/thingsboard-gateway-$CURRENT_VERSION/debian/python3-thingsboard-gateway/var/ -R
-  sudo chmod 775 deb_dist/thingsboard-gateway-$CURRENT_VERSION/debian/python3-thingsboard-gateway/DEBIAN/preinst
-  sudo chmod +x deb_dist/thingsboard-gateway-$CURRENT_VERSION/debian/python3-thingsboard-gateway/DEBIAN/postinst
-  sudo chown root:root deb_dist/thingsboard-gateway-$CURRENT_VERSION/debian/python3-thingsboard-gateway/DEBIAN/preinst
-  sudo sh -c "sed -i '/^Depends: .*/ s/$/, libffi-dev, libglib2.0-dev, libxml2-dev, libxslt-dev, libssl-dev, zlib1g-dev/' deb_dist/thingsboard-gateway-$CURRENT_VERSION/debian/python3-thingsboard-gateway/DEBIAN/control >> deb_dist/thingsboard-gateway-$CURRENT_VERSION/debian/python3-thingsboard-gateway/DEBIAN/control"
+  sudo cp -r ticos_gateway/extensions for_build/etc/ticos-gateway/
+  sudo cp -r ticos_gateway/config for_build/etc/ticos-gateway/
+  sudo cp -r for_build/etc deb_dist/ticos-gateway-$CURRENT_VERSION/debian/python3-ticos-gateway
+  sudo cp -r for_build/var deb_dist/ticos-gateway-$CURRENT_VERSION/debian/python3-ticos-gateway
+  sudo cp -r -a for_build/DEBIAN deb_dist/ticos-gateway-$CURRENT_VERSION/debian/python3-ticos-gateway
+  sudo chown root:root deb_dist/ticos-gateway-$CURRENT_VERSION/debian/python3-ticos-gateway/ -R
+  sudo chown root:root deb_dist/ticos-gateway-$CURRENT_VERSION/debian/python3-ticos-gateway/var/ -R
+  sudo chmod 775 deb_dist/ticos-gateway-$CURRENT_VERSION/debian/python3-ticos-gateway/DEBIAN/preinst
+  sudo chmod +x deb_dist/ticos-gateway-$CURRENT_VERSION/debian/python3-ticos-gateway/DEBIAN/postinst
+  sudo chown root:root deb_dist/ticos-gateway-$CURRENT_VERSION/debian/python3-ticos-gateway/DEBIAN/preinst
+  sudo sh -c "sed -i '/^Depends: .*/ s/$/, libffi-dev, libglib2.0-dev, libxml2-dev, libxslt-dev, libssl-dev, zlib1g-dev/' deb_dist/ticos-gateway-$CURRENT_VERSION/debian/python3-ticos-gateway/DEBIAN/control >> deb_dist/ticos-gateway-$CURRENT_VERSION/debian/python3-ticos-gateway/DEBIAN/control"
   # Bulding Deb package
-  dpkg-deb -b deb_dist/thingsboard-gateway-$CURRENT_VERSION/debian/python3-thingsboard-gateway/
+  dpkg-deb -b deb_dist/ticos-gateway-$CURRENT_VERSION/debian/python3-ticos-gateway/
   mkdir deb-temp
   cd deb-temp
-  ar x ../deb_dist/thingsboard-gateway-$CURRENT_VERSION/debian/python3-thingsboard-gateway.deb
+  ar x ../deb_dist/ticos-gateway-$CURRENT_VERSION/debian/python3-ticos-gateway.deb
   zstd -d *.zst
   rm *.zst
   xz *.tar
-  ar r ../python3-thingsboard-gateway.deb debian-binary control.tar.xz data.tar.xz
+  ar r ../python3-ticos-gateway.deb debian-binary control.tar.xz data.tar.xz
   cd ..
   rm -r deb-temp
 fi

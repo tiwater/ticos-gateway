@@ -1,12 +1,12 @@
 version: '3.0'
 services:
-  tb-gateway:
+  ticos-gateway:
     restart: always
-    image: "thingsboard/tb-gateway"
+    image: "ticos/ticos-gateway"
     # Ports (Required for REST connector)
     ports:
       - "5000:5000"
     volumes:
-      - ~/.tb-gateway/config:/thingsboard_gateway/config
-      - ~/.tb-gateway/logs:/thingsboard_gateway/logs
-      - ~/.tb-gateway/extensions:/thingsboard_gateway/extensions
+      - ~/.ticos-gateway/config:/ticos_gateway/config
+      - ~/.ticos-gateway/logs:/ticos_gateway/logs
+      - ~/.ticos-gateway/extensions:/ticos_gateway/extensions

@@ -1,4 +1,4 @@
-#      Copyright 2022. ThingsBoard
+#      Copyright 2022. Ticos
 #  #
 #      Licensed under the Apache License, Version 2.0 (the "License");
 #      you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
 import unittest
 from time import time
 
-from thingsboard_gateway.gateway.constants import *
-from thingsboard_gateway.gateway.duplicate_detector import DuplicateDetector
+from ticos_gateway.gateway.constants import *
+from ticos_gateway.gateway.duplicate_detector import DuplicateDetector
 
 
 class Connector:

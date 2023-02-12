@@ -10,7 +10,7 @@
       "strictEval": false,
       "attributeUpdates": [
         {
-          "attributeOnThingsBoard": "boolAttr",
+          "attributeOnTicos": "boolAttr",
           "nodeId": 1
         },
         {
@@ -21,7 +21,7 @@
           "dataByteorder": "little"
         },
         {
-          "attributeOnThingsBoard": "floatAttr",
+          "attributeOnTicos": "floatAttr",
           "nodeId": 3
         },
         {
@@ -31,7 +31,7 @@
           "dataExpression": "'Test' + value"
         },
         {
-          "attributeOnThingsBoard": "wrongConfigAttr",
+          "attributeOnTicos": "wrongConfigAttr",
           "nodeId": 123456
         }
       ]
